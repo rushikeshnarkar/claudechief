@@ -4,6 +4,34 @@
 -- ─── ENABLE UUID EXTENSION ───────────────────────────────────────────────────
 create extension if not exists "uuid-ossp";
 
+-- ─── USER PROFILES (must come first so other tables can reference it) ─────────
+create table if not exists public.user_profiles (
+  id uuid references auth.users on delete cascade primary key,
+  email text not null,
+  is_admin boolean not null default false,
+  created_at timestamptz default now()
+);
+
+alter table public.user_profiles enable row level security;
+create policy "Public read own profile" on public.user_profiles
+  for select using (auth.uid() = id);
+create policy "Users update own profile" on public.user_profiles
+  for update using (auth.uid() = id);
+
+-- Auto-create profile on signup
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.user_profiles (id, email)
+  values (new.id, new.email);
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create or replace trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_user();
+
 -- ─── SKILLS ─────────────────────────────────────────────────────────────────
 create table if not exists public.skills (
   id uuid default uuid_generate_v4() primary key,
@@ -31,13 +59,13 @@ create table if not exists public.skills (
 alter table public.skills enable row level security;
 create policy "Public read skills" on public.skills for select using (true);
 create policy "Admin insert skills" on public.skills for insert with check (
-  (select is_admin from public.user_profiles where id = auth.uid()) = true
+  exists (select 1 from public.user_profiles where id = auth.uid() and is_admin = true)
 );
 create policy "Admin update skills" on public.skills for update using (
-  (select is_admin from public.user_profiles where id = auth.uid()) = true
+  exists (select 1 from public.user_profiles where id = auth.uid() and is_admin = true)
 );
 create policy "Admin delete skills" on public.skills for delete using (
-  (select is_admin from public.user_profiles where id = auth.uid()) = true
+  exists (select 1 from public.user_profiles where id = auth.uid() and is_admin = true)
 );
 
 -- ─── WORKFLOWS ──────────────────────────────────────────────────────────────
@@ -65,13 +93,13 @@ create table if not exists public.workflows (
 alter table public.workflows enable row level security;
 create policy "Public read workflows" on public.workflows for select using (true);
 create policy "Admin insert workflows" on public.workflows for insert with check (
-  (select is_admin from public.user_profiles where id = auth.uid()) = true
+  exists (select 1 from public.user_profiles where id = auth.uid() and is_admin = true)
 );
 create policy "Admin update workflows" on public.workflows for update using (
-  (select is_admin from public.user_profiles where id = auth.uid()) = true
+  exists (select 1 from public.user_profiles where id = auth.uid() and is_admin = true)
 );
 create policy "Admin delete workflows" on public.workflows for delete using (
-  (select is_admin from public.user_profiles where id = auth.uid()) = true
+  exists (select 1 from public.user_profiles where id = auth.uid() and is_admin = true)
 );
 
 -- ─── MCPS ───────────────────────────────────────────────────────────────────
@@ -97,13 +125,13 @@ create table if not exists public.mcps (
 alter table public.mcps enable row level security;
 create policy "Public read mcps" on public.mcps for select using (true);
 create policy "Admin insert mcps" on public.mcps for insert with check (
-  (select is_admin from public.user_profiles where id = auth.uid()) = true
+  exists (select 1 from public.user_profiles where id = auth.uid() and is_admin = true)
 );
 create policy "Admin update mcps" on public.mcps for update using (
-  (select is_admin from public.user_profiles where id = auth.uid()) = true
+  exists (select 1 from public.user_profiles where id = auth.uid() and is_admin = true)
 );
 create policy "Admin delete mcps" on public.mcps for delete using (
-  (select is_admin from public.user_profiles where id = auth.uid()) = true
+  exists (select 1 from public.user_profiles where id = auth.uid() and is_admin = true)
 );
 
 -- ─── UPDATES ────────────────────────────────────────────────────────────────
@@ -122,13 +150,13 @@ create table if not exists public.updates (
 alter table public.updates enable row level security;
 create policy "Public read updates" on public.updates for select using (true);
 create policy "Admin insert updates" on public.updates for insert with check (
-  (select is_admin from public.user_profiles where id = auth.uid()) = true
+  exists (select 1 from public.user_profiles where id = auth.uid() and is_admin = true)
 );
 create policy "Admin update updates" on public.updates for update using (
-  (select is_admin from public.user_profiles where id = auth.uid()) = true
+  exists (select 1 from public.user_profiles where id = auth.uid() and is_admin = true)
 );
 create policy "Admin delete updates" on public.updates for delete using (
-  (select is_admin from public.user_profiles where id = auth.uid()) = true
+  exists (select 1 from public.user_profiles where id = auth.uid() and is_admin = true)
 );
 
 -- ─── CREATORS ──────────────────────────────────────────────────────────────
@@ -149,45 +177,14 @@ create table if not exists public.creators (
 alter table public.creators enable row level security;
 create policy "Public read creators" on public.creators for select using (true);
 create policy "Admin insert creators" on public.creators for insert with check (
-  (select is_admin from public.user_profiles where id = auth.uid()) = true
+  exists (select 1 from public.user_profiles where id = auth.uid() and is_admin = true)
 );
 create policy "Admin update creators" on public.creators for update using (
-  (select is_admin from public.user_profiles where id = auth.uid()) = true
+  exists (select 1 from public.user_profiles where id = auth.uid() and is_admin = true)
 );
 create policy "Admin delete creators" on public.creators for delete using (
-  (select is_admin from public.user_profiles where id = auth.uid()) = true
+  exists (select 1 from public.user_profiles where id = auth.uid() and is_admin = true)
 );
-
--- ─── USER PROFILES ─────────────────────────────────────────────────────────
-create table if not exists public.user_profiles (
-  id uuid references auth.users on delete cascade primary key,
-  email text not null,
-  is_admin boolean not null default false,
-  created_at timestamptz default now()
-);
-
-alter table public.user_profiles enable row level security;
-create policy "Public read own profile" on public.user_profiles
-  for select using (auth.uid() = id);
-create policy "Admin insert profiles" on public.user_profiles for insert with check (
-  (select is_admin from public.user_profiles where id = auth.uid()) = true
-);
-create policy "Users update own profile" on public.user_profiles
-  for update using (auth.uid() = id);
-
--- Auto-create profile on signup
-create or replace function public.handle_new_user()
-returns trigger as $$
-begin
-  insert into public.user_profiles (id, email)
-  values (new.id, new.email);
-  return new;
-end;
-$$ language plpgsql security definer;
-
-create or replace trigger on_auth_user_created
-  after insert on auth.users
-  for each row execute function public.handle_new_user();
 
 -- ─── SEED DATA ─────────────────────────────────────────────────────────────
 insert into public.skills (title, slug, description, prompt_preview, department, tier, creator_name, creator_link, save_count, source_type, source_url) values
