@@ -2,49 +2,21 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, ExternalLink, Calendar, Zap, Rocket, Code, FileText } from 'lucide-react';
+import { createClient } from '@/lib/supabase/server';
+import { SITE_URL } from '@/lib/constants';
 
-const UPDATES: Record<string, {
-  title: string; description: string; date: string; type: string;
-  impact: string; summary: string; source_url: string; tags?: string[];
-}> = {
-  'claude-3-7-sonnet': {
-    title: 'Claude 3.7 Sonnet Released',
-    description: 'Anthropic releases Claude 3.7 Sonnet with extended thinking capabilities and improved coding performance.',
-    date: '2026-04-10',
-    type: 'model',
-    impact: 'high',
-    summary: 'Claude 3.7 Sonnet introduces extended thinking with up to 128K token context for complex reasoning tasks. Coding performance improved by 15%. The new model can think through problems step-by-step before responding, leading to more accurate answers on complex tasks.',
-    source_url: 'https://anthropic.com/news/claude-3-7-sonnet',
-    tags: ['Extended Thinking', '128K Context', 'Coding', 'Reasoning'],
-  },
-  'mcp-sdk-v2': {
-    title: 'MCP SDK v2.0 Launch',
-    description: 'Model Context Protocol SDK v2.0 brings simplified setup, better error handling, and new transport options.',
-    date: '2026-03-28',
-    type: 'feature',
-    impact: 'medium',
-    summary: 'The new SDK includes TypeScript support, WebSocket transport, and improved debugging tools for MCP server developers. Setup time reduced from hours to minutes.',
-    source_url: 'https://anthropic.com/docs/mcp/sdk-v2',
-    tags: ['TypeScript', 'WebSocket', 'MCP', 'SDK'],
-  },
-  'claude-for-business': {
-    title: 'Claude for Business Announcement',
-    description: 'Anthropic announces Claude for Business with admin controls, SSO, and dedicated support for enterprise teams.',
-    date: '2026-02-20',
-    type: 'product',
-    impact: 'high',
-    summary: 'Claude for Business includes team management, analytics dashboard, custom model fine-tuning, and priority support. SSO with SAML 2.0, audit logs, and data residency options.',
-    source_url: 'https://anthropic.com/claude-for-business',
-    tags: ['Enterprise', 'SSO', 'Admin', 'Analytics'],
-  },
+const TYPE_CONFIG: Record<string, { icon: typeof Rocket; color: string; bg: string; border: string }> = {
+  model: { icon: Rocket, color: '#D97757', bg: 'rgba(217,119,87,0.12)', border: 'rgba(217,119,87,0.2)' },
+  feature: { icon: Zap, color: '#6A9BCC', bg: 'rgba(106,155,204,0.12)', border: 'rgba(106,155,204,0.2)' },
+  api: { icon: Code, color: '#4ADE80', bg: 'rgba(74,222,128,0.12)', border: 'rgba(74,222,128,0.2)' },
+  announcement: { icon: FileText, color: '#D97757', bg: 'rgba(201,134,42,0.12)', border: 'rgba(201,134,42,0.2)' },
 };
 
-const TYPE_CONFIG: Record<string, { icon: typeof Rocket; color: string; bg: string }> = {
-  model: { icon: Rocket, color: '#D97757', bg: 'rgba(217,119,87,0.12)' },
-  feature: { icon: Zap, color: '#6A9BCC', bg: 'rgba(106,155,204,0.12)' },
-  api: { icon: Code, color: '#4ADE80', bg: 'rgba(74,222,128,0.12)' },
-  product: { icon: FileText, color: '#C9862A', bg: 'rgba(201,134,42,0.12)' },
-  'open-source': { icon: Code, color: '#788C5D', bg: 'rgba(120,140,93,0.12)' },
+const TYPE_LABELS: Record<string, string> = {
+  model: 'Model',
+  feature: 'Feature',
+  api: 'API',
+  announcement: 'Announcement',
 };
 
 interface UpdatePageProps {
@@ -53,22 +25,38 @@ interface UpdatePageProps {
 
 export async function generateMetadata({ params }: UpdatePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const update = UPDATES[slug];
+  const supabase = await createClient();
+  const { data: update } = await supabase
+    .from('updates')
+    .select('title, summary')
+    .eq('slug', slug)
+    .single();
+
   if (!update) return { title: 'Update Not Found' };
+
   return {
     title: `${update.title} — Claude Update | Claude Chief`,
     description: update.summary,
+    alternates: {
+      canonical: `${SITE_URL}/updates/${slug}`,
+    },
   };
 }
 
 export default async function UpdateDetailPage({ params }: UpdatePageProps) {
   const { slug } = await params;
-  const update = UPDATES[slug];
+  const supabase = await createClient();
+  const { data: update } = await supabase
+    .from('updates')
+    .select('*')
+    .eq('slug', slug)
+    .single();
 
   if (!update) notFound();
 
-  const config = TYPE_CONFIG[update.type] || TYPE_CONFIG.feature;
+  const config = TYPE_CONFIG[update.update_type] || TYPE_CONFIG.feature;
   const Icon = config.icon;
+  const typeLabel = TYPE_LABELS[update.update_type] || update.update_type;
 
   return (
     <>
@@ -80,11 +68,11 @@ export default async function UpdateDetailPage({ params }: UpdatePageProps) {
           </Link>
 
           <div className="flex items-center gap-2 mb-4 flex-wrap">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[10px] font-semibold tracking-wider uppercase rounded-full border" style={{ background: config.bg, color: config.color, borderColor: `${config.color}33` }}>
-              <Icon className="w-3 h-3" /> {update.type}
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 text-[10px] font-semibold tracking-wider uppercase rounded-full border" style={{ background: config.bg, color: config.color, borderColor: config.border }}>
+              <Icon className="w-3 h-3" /> {typeLabel}
             </span>
-            {update.impact === 'high' && (
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[rgba(217,119,87,0.12)] text-[#D97757] text-[10px] font-semibold tracking-wider uppercase rounded-full border border-[rgba(217,119,87,0.2)]">
+            {update.impact_level === 'high' && (
+              <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[rgba(217,119,87,0.12)] text-[#D97757] text-[10px] font-semibold tracking-wider uppercase rounded-full border border-[rgba(217,119,87,0.2)]">
                 <Zap className="w-3 h-3" /> High Impact
               </span>
             )}
@@ -98,7 +86,7 @@ export default async function UpdateDetailPage({ params }: UpdatePageProps) {
             {update.title}
           </h1>
           <p className="text-lg text-[#A99E92] leading-relaxed max-w-2xl">
-            {update.description}
+            {update.summary}
           </p>
         </div>
       </section>
@@ -117,39 +105,31 @@ export default async function UpdateDetailPage({ params }: UpdatePageProps) {
                 </h2>
                 <p className="text-[#A99E92] leading-relaxed text-base">{update.summary}</p>
               </div>
-
-              {/* Tags */}
-              {update.tags && (
-                <div className="p-6 bg-[rgba(19,17,24,0.88)] border border-[rgba(54,46,40,0.5)] rounded-[22px]">
-                  <h3 className="text-[10px] uppercase tracking-wider text-[#6B6158] mb-4">Topics</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {update.tags.map(tag => (
-                      <span key={tag} className="px-3 py-1.5 bg-[#131118] border border-[rgba(54,46,40,0.5)] rounded-lg text-sm text-[#A99E92]">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Sidebar */}
             <div className="space-y-5">
               <div className="p-6 bg-[rgba(19,17,24,0.88)] border border-[rgba(54,46,40,0.5)] rounded-[22px]">
                 <h3 className="font-body font-semibold text-[#F5F0EB] text-sm mb-4">Read more</h3>
-                <a href={update.source_url} target="_blank" rel="noopener noreferrer" className="btn btn-primary w-full justify-center">
-                  Official Announcement <ExternalLink className="w-4 h-4" />
-                </a>
+                {update.source_link ? (
+                  <a href={update.source_link} target="_blank" rel="noopener noreferrer" className="btn btn-primary w-full justify-center">
+                    Official Announcement <ExternalLink className="w-4 h-4" />
+                  </a>
+                ) : (
+                  <button className="btn btn-primary w-full justify-center opacity-50 cursor-not-allowed">
+                    No link available
+                  </button>
+                )}
               </div>
 
               <div className="p-6 bg-[rgba(19,17,24,0.88)] border border-[rgba(54,46,40,0.5)] rounded-[22px]">
                 <h3 className="font-body font-semibold text-[#F5F0EB] text-sm mb-4">Impact level</h3>
                 <div className="space-y-3">
-                  {['Critical', 'High', 'Medium', 'Low'].map(level => (
+                  {['high', 'medium', 'low'].map(level => (
                     <div key={level} className="flex items-center gap-3">
-                      <div className={`w-3 h-3 rounded-full ${update.impact === level.toLowerCase() ? 'bg-[#D97757]' : 'bg-[rgba(54,46,40,0.5)]'}`} />
-                      <span className={`text-sm ${update.impact === level.toLowerCase() ? 'text-[#F5F0EB] font-medium' : 'text-[#6B6158]'}`}>
-                        {level}
+                      <div className={`w-3 h-3 rounded-full ${update.impact_level === level ? 'bg-[#D97757]' : 'bg-[rgba(54,46,40,0.5)]'}`} />
+                      <span className={`text-sm ${update.impact_level === level ? 'text-[#F5F0EB] font-medium' : 'text-[#6B6158]'}`}>
+                        {level.charAt(0).toUpperCase() + level.slice(1)}
                       </span>
                     </div>
                   ))}

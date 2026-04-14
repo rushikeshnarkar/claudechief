@@ -2,6 +2,9 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { ArrowLeft, ExternalLink, Bookmark, User, Calendar, Share2, Star } from 'lucide-react';
+import { createClient } from '@/lib/supabase/server';
+import { formatNumber } from '@/lib/utils';
+import { SITE_URL } from '@/lib/constants';
 
 interface SkillDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -9,11 +12,14 @@ interface SkillDetailPageProps {
 
 export async function generateMetadata({ params }: SkillDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const skill = await getSkillBySlug(slug);
+  const supabase = await createClient();
+  const { data: skill } = await supabase
+    .from('skills')
+    .select('title, description, department, tier, creator_name, creator_link')
+    .eq('slug', slug)
+    .single();
 
-  if (!skill) {
-    return { title: 'Skill Not Found' };
-  }
+  if (!skill) return { title: 'Skill Not Found' };
 
   return {
     title: `${skill.title} — Claude Skill | Claude Chief`,
@@ -22,64 +28,35 @@ export async function generateMetadata({ params }: SkillDetailPageProps): Promis
       title: skill.title,
       description: skill.description,
       type: 'article',
-      authors: [skill.creator_name],
+      url: `${SITE_URL}/skills/${slug}`,
     },
     alternates: {
-      canonical: `https://claudechief.com/skills/${slug}`,
+      canonical: `${SITE_URL}/skills/${slug}`,
     },
   };
-}
-
-async function getSkillBySlug(slug: string) {
-  const skills: Record<string, {
-    id: string;
-    title: string;
-    slug: string;
-    description: string;
-    prompt_preview: string;
-    department: string;
-    tier: string;
-    creator_name: string;
-    creator_link: string;
-    save_count: number;
-    source_type: string;
-    source_url: string;
-    created_at: string;
-    difficulty?: string;
-    download_url?: string;
-  }> = {
-    'linkedin-content-system': {
-      id: '1',
-      title: 'LinkedIn Content System',
-      slug: 'linkedin-content-system',
-      description: 'A comprehensive prompt system for creating engaging LinkedIn content with Claude. Generate viral posts in minutes with this battle-tested framework used by 1,200+ professionals.',
-      prompt_preview: 'Create a LinkedIn post about [TOPIC] that follows this structure:\n\n1. Hook — First line that stops the scroll (use curiosity or a bold statement)\n2. Body — 3-4 key points with specific examples\n3. Call to Action — Engage readers with a question or prompt\n\nTone: [CONVERSATIONAL / PROFESSIONAL / THOUGHT-PROVOKING]\nTarget audience: [YOUR IDEAL FOLLOWER]\nLength: 150-300 words\nFormat: Plain text, no emojis in the main post',
-      department: 'marketing',
-      tier: 'free',
-      creator_name: 'Alex Chen',
-      creator_link: 'https://twitter.com/alexchen',
-      save_count: 1247,
-      source_type: 'github',
-      source_url: 'https://github.com/alexchen/claude-linkedin',
-      created_at: '2026-03-15',
-      difficulty: 'Beginner',
-      download_url: '/downloads/linkedin-content-system.md',
-    },
-  };
-
-  return skills[slug] || null;
 }
 
 export default async function SkillDetailPage({ params }: SkillDetailPageProps) {
   const { slug } = await params;
-  const skill = await getSkillBySlug(slug);
+  const supabase = await createClient();
+  const { data: skill } = await supabase
+    .from('skills')
+    .select('*')
+    .eq('slug', slug)
+    .single();
 
-  if (!skill) {
-    notFound();
-  }
+  if (!skill) notFound();
 
   const deptLabel = skill.department.charAt(0).toUpperCase() + skill.department.slice(1);
-  const sourceLabel = skill.source_type === 'github' ? 'GitHub' : skill.source_type === 'youtube' ? 'YouTube' : 'Source';
+  const sourceLabel = skill.source_type === 'github' ? 'GitHub'
+    : skill.source_type === 'youtube' ? 'YouTube'
+    : skill.source_type === 'blog' ? 'Blog'
+    : skill.source_type === 'twitter' ? 'Twitter'
+    : 'Source';
+
+  const tierBadge = skill.tier === 'free'
+    ? 'bg-[rgba(74,222,128,0.12)] text-[#4ADE80] border-[rgba(74,222,128,0.2)]'
+    : 'bg-[rgba(201,134,42,0.12)] text-[#D97757] border-[rgba(201,134,42,0.2)]';
 
   return (
     <>
@@ -100,18 +77,9 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[rgba(217,119,87,0.12)] text-[#D97757] text-[10px] font-semibold tracking-wider uppercase rounded-full border border-[rgba(217,119,87,0.2)]">
               {deptLabel}
             </span>
-            <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[10px] font-semibold tracking-wider uppercase rounded-full border ${
-              skill.tier === 'free'
-                ? 'bg-[rgba(74,222,128,0.12)] text-[#4ADE80] border-[rgba(74,222,128,0.2)]'
-                : 'bg-[rgba(201,134,42,0.12)] text-[#D97757] border-[rgba(201,134,42,0.2)]'
-            }`}>
+            <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[10px] font-semibold tracking-wider uppercase rounded-full border ${tierBadge}`}>
               {skill.tier === 'elite' ? 'Elite' : 'Free'}
             </span>
-            {skill.difficulty && (
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[rgba(106,155,204,0.12)] text-[#6A9BCC] text-[10px] font-semibold tracking-wider uppercase rounded-full border border-[rgba(106,155,204,0.2)]">
-                {skill.difficulty}
-              </span>
-            )}
           </div>
 
           {/* Title */}
@@ -126,18 +94,25 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
 
           {/* Meta Stats */}
           <div className="flex items-center gap-6 text-sm flex-wrap">
-            <a
-              href={skill.creator_link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-[#A99E92] hover:text-[#D97757] transition-colors"
-            >
-              <User className="w-4 h-4" />
-              <span>by <span className="font-medium">{skill.creator_name}</span></span>
-            </a>
+            {skill.creator_link ? (
+              <a
+                href={skill.creator_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-[#A99E92] hover:text-[#D97757] transition-colors"
+              >
+                <User className="w-4 h-4" />
+                <span>by <span className="font-medium">{skill.creator_name}</span></span>
+              </a>
+            ) : (
+              <div className="flex items-center gap-2 text-[#A99E92]">
+                <User className="w-4 h-4" />
+                <span>by <span className="font-medium">{skill.creator_name}</span></span>
+              </div>
+            )}
             <div className="flex items-center gap-2 text-[#A99E92]">
               <Bookmark className="w-4 h-4" />
-              <span>{skill.save_count.toLocaleString()} saves</span>
+              <span>{formatNumber(skill.save_count)} saves</span>
             </div>
             <div className="flex items-center gap-2 text-[#A99E92]">
               <Calendar className="w-4 h-4" />
@@ -154,18 +129,20 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-8">
               {/* Prompt Preview Card */}
-              <div className="relative p-8 bg-[linear-gradient(135deg,rgba(19,17,24,0.88)_0%,rgba(26,23,32,0.6)_100%)] border border-[rgba(54,46,40,0.5)] rounded-[22px] backdrop-blur-xl">
-                <div className="absolute top-0 left-0 w-20 h-20 bg-[radial-gradient(circle_at_top_left,rgba(217,119,87,0.08),transparent_70%)]" />
-                <h2 className="font-display text-xl font-bold text-[#F5F0EB] mb-5 flex items-center gap-2">
-                  <span className="w-8 h-8 flex items-center justify-center bg-[#D97757]/20 rounded-lg">
-                    <Star className="w-4 h-4 text-[#D97757]" />
-                  </span>
-                  Prompt Preview
-                </h2>
-                <pre className="text-[#A99E92] text-sm leading-relaxed whitespace-pre-wrap font-mono bg-[#131118]/50 rounded-xl p-5 border border-[rgba(54,46,40,0.3)]">
-                  {skill.prompt_preview}
-                </pre>
-              </div>
+              {skill.prompt_preview && (
+                <div className="relative p-8 bg-[linear-gradient(135deg,rgba(19,17,24,0.88)_0%,rgba(26,23,32,0.6)_100%)] border border-[rgba(54,46,40,0.5)] rounded-[22px] backdrop-blur-xl">
+                  <div className="absolute top-0 left-0 w-20 h-20 bg-[radial-gradient(circle_at_top_left,rgba(217,119,87,0.08),transparent_70%)]" />
+                  <h2 className="font-display text-xl font-bold text-[#F5F0EB] mb-5 flex items-center gap-2">
+                    <span className="w-8 h-8 flex items-center justify-center bg-[#D97757]/20 rounded-lg">
+                      <Star className="w-4 h-4 text-[#D97757]" />
+                    </span>
+                    Prompt Preview
+                  </h2>
+                  <pre className="text-[#A99E92] text-sm leading-relaxed whitespace-pre-wrap font-mono bg-[#131118]/50 rounded-xl p-5 border border-[rgba(54,46,40,0.3)]">
+                    {skill.prompt_preview}
+                  </pre>
+                </div>
+              )}
 
               {/* Related Resources */}
               <div className="p-8 bg-[rgba(19,17,24,0.88)] border border-[rgba(54,46,40,0.5)] rounded-[22px] backdrop-blur-xl">
@@ -173,7 +150,7 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
                   Related Resources
                 </h2>
                 <p className="text-[#6B6158] text-sm">
-                  More related skills coming soon…
+                  More {deptLabel} skills coming soon…
                 </p>
               </div>
             </div>
@@ -186,15 +163,21 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
                   Get this skill
                 </h3>
                 <div className="space-y-3">
-                  <a
-                    href={skill.source_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-primary w-full justify-center"
-                  >
-                    View on {sourceLabel}
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
+                  {skill.source_url ? (
+                    <a
+                      href={skill.source_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-primary w-full justify-center"
+                    >
+                      View on {sourceLabel}
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  ) : (
+                    <button className="btn btn-primary w-full justify-center opacity-50 cursor-not-allowed">
+                      No source available
+                    </button>
+                  )}
                   <button className="btn btn-ghost w-full justify-center">
                     <Bookmark className="w-4 h-4" />
                     Save for later
@@ -218,17 +201,26 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
                 <h3 className="font-body font-semibold text-[#F5F0EB] text-sm mb-4">
                   Creator
                 </h3>
-                <a
-                  href={skill.creator_link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 text-[#A99E92] hover:text-[#D97757] transition-colors"
-                >
-                  <div className="w-10 h-10 bg-[#131118] rounded-full flex items-center justify-center text-lg">
-                    <User className="w-5 h-5 text-[#6B6158]" />
+                {skill.creator_link ? (
+                  <a
+                    href={skill.creator_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 text-[#A99E92] hover:text-[#D97757] transition-colors"
+                  >
+                    <div className="w-10 h-10 bg-[#131118] rounded-full flex items-center justify-center text-lg">
+                      <User className="w-5 h-5 text-[#6B6158]" />
+                    </div>
+                    <span className="font-medium">{skill.creator_name}</span>
+                  </a>
+                ) : (
+                  <div className="flex items-center gap-3 text-[#A99E92]">
+                    <div className="w-10 h-10 bg-[#131118] rounded-full flex items-center justify-center text-lg">
+                      <User className="w-5 h-5 text-[#6B6158]" />
+                    </div>
+                    <span className="font-medium">{skill.creator_name}</span>
                   </div>
-                  <span className="font-medium">{skill.creator_name}</span>
-                </a>
+                )}
               </div>
             </div>
           </div>
@@ -254,9 +246,10 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
             author: {
               '@type': 'Person',
               name: skill.creator_name,
-              url: skill.creator_link,
+              url: skill.creator_link || undefined,
             },
             keywords: `Claude skills, ${skill.department}, AI prompts`,
+            url: `${SITE_URL}/skills/${slug}`,
           }),
         }}
       />
