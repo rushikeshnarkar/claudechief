@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Chief — Skills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    :root {
+      --bg-base: #0D0B0F;
+      --bg-elevated: #131118;
+      --bg-surface: #1A1720;
+      --bg-card: rgba(19, 17, 24, 0.88);
+      --border: rgba(54, 46, 40, 0.5);
+      --border-subtle: rgba(54, 46, 40, 0.3);
+      --terra: #D97757;
+      --terra-hover: #E5886A;
+      --terra-muted: rgba(217, 119, 87, 0.12);
+      --text-primary: #F5F0EB;
+      --text-secondary: #A99E92;
+      --text-muted: #6B6158;
+      --sage: #4ADE80;
+      --amber: #D97757;
+      --blue: #6A9BCC;
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 18px;
+      --radius-xl: 22px;
+      --font-display: 'Fraunces', Georgia, serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      mix-blend-mode: overlay;
+    }
+
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      background: rgba(13, 11, 15, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 40px;
+      height: 40px;
+      background: var(--terra);
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo-mark::before {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: var(--text-primary);
+      border-radius: 50%;
+      top: 5px;
+      right: 5px;
+    }
+
+    .logo-mark::after {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: var(--text-primary);
+      border-radius: 3px;
+      bottom: 5px;
+      left: 6px;
+      transform: rotate(12deg);
+    }
+
+    .logo-text {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+      display: none;
+      align-items: center;
+      gap: 4px;
+    }
+
+    @media (min-width: 768px) {
+      .nav-links { display: flex; }
+    }
+
+    .nav-link {
+      padding: 10px 16px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--text-primary);
+      background: var(--bg-elevated);
+    }
+
+    .nav-link.active {
+      background: var(--terra);
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.35s var(--spring);
+      min-height: 44px;
+    }
+
+    .btn-primary {
+      background: var(--terra);
+      color: var(--text-primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--terra-hover);
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--terra);
+      border: 1.5px solid var(--terra);
+    }
+
+    .btn-ghost:hover {
+      background: var(--terra-muted);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1.5px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--terra);
+      color: var(--terra);
+      background: var(--terra-muted);
+    }
+
+    /* Hero Header */
+    .hero-header {
+      padding: 140px 24px 40px;
+      background: var(--bg-surface);
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.875rem, 4vw, 2.5rem);
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    .hero-subtitle {
+      font-size: 1.125rem;
+      color: var(--text-secondary);
+      max-width: 640px;
+      line-height: 1.7;
+    }
+
+    /* Search Bar */
+    .search-section {
+      padding: 0 24px 32px;
+      background: var(--bg-surface);
+    }
+
+    .search-container {
+      max-width: 640px;
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 16px 20px 16px 56px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      font-family: var(--font-body);
+      font-size: 16px;
+      color: var(--text-primary);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transition: all 0.3s ease;
+    }
+
+    .search-input::placeholder { color: var(--text-muted); }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--terra);
+      box-shadow: 0 0 0 4px var(--terra-muted);
+    }
+
+    /* Filter Pills */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0 24px 24px;
+      background: var(--bg-surface);
+    }
+
+    .filter-select {
+      padding: 10px 16px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      min-height: 44px;
+      transition: all 0.2s ease;
+    }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--terra);
+    }
+
+    .results-count {
+      padding: 0 24px 24px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .results-count span {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    /* Cards Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      padding: 0 24px;
+    }
+
+    @media (min-width: 768px) {
+      .cards-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (min-width: 1024px) {
+      .cards-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .resource-card {
+      position: relative;
+      padding: 24px;
+      background: linear-gradient(135deg, var(--bg-card) 0%, rgba(26, 23, 32, 0.6) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      overflow: hidden;
+      text-decoration: none;
+      transition: all 0.35s var(--spring);
+    }
+
+    .resource-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle at top right, var(--terra-muted), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .resource-card:hover {
+      border-color: var(--terra);
+      transform: translateY(-5px);
+      box-shadow: 0 8px 40px rgba(217, 119, 87, 0.12);
+    }
+
+    .resource-card:hover::before { opacity: 1; }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .card-saves {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .card-description {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 16px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 12px;
+      border-radius: 99px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .badge-dept {
+      background: var(--terra-muted);
+      color: var(--terra);
+      border: 1px solid rgba(217, 119, 87, 0.2);
+    }
+
+    .badge-free {
+      background: rgba(74, 222, 128, 0.12);
+      color: var(--sage);
+      border: 1px solid rgba(74, 222, 128, 0.2);
+    }
+
+    .badge-elite {
+      background: rgba(201, 134, 42, 0.12);
+      color: var(--amber);
+      border: 1px solid rgba(201, 134, 42, 0.2);
+    }
+
+    .card-footer {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    /* Load More */
+    .load-more {
+      padding: 48px 24px;
+      text-align: center;
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-subtle);
+      padding: 48px 24px;
+    }
+
+    .footer-content {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      sm:flex-row;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .footer-logo {
+      width: 32px;
+      height: 32px;
+      background: var(--terra);
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .footer-logo::before {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: var(--text-primary);
+      border-radius: 50%;
+      top: 4px;
+      right: 4px;
+    }
+
+    .footer-logo::after {
+      content: '';
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      background: var(--text-primary);
+      border-radius: 2px;
+      bottom: 4px;
+      left: 4px;
+      transform: rotate(12deg);
+    }
+
+    .footer-text {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--text-secondary);
+    }
+
+    /* Animation */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fadeUp {
+      animation: fadeUp 0.4s ease-out forwards;
+      opacity: 0;
+    }
+
+    .delay-1 { animation-delay: 50ms; }
+    .delay-2 { animation-delay: 100ms; }
+    .delay-3 { animation-delay: 150ms; }
+    .delay-4 { animation-delay: 200ms; }
+    .delay-5 { animation-delay: 250ms; }
+    .delay-6 { animation-delay: 300ms; }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .navbar { padding: 0 16px; }
+      .container { padding: 0 16px; }
+      .hero-header { padding: 120px 16px 32px; }
+      .search-section, .filters, .results-count { padding-left: 16px; padding-right: 16px; }
+      .cards-grid { padding: 0 16px; }
+      .resource-card { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="/" class="logo">
+      <div class="logo-mark"></div>
+      <span class="logo-text">Claude Chief</span>
+    </a>
+    <div class="nav-links">
+      <a href="/skills" class="nav-link active">Skills</a>
+      <a href="/workflows" class="nav-link">Workflows</a>
+      <a href="/mcps" class="nav-link">MCPs</a>
+      <a href="/blog" class="nav-link">Blog</a>
+    </div>
+    <a href="/sign-in" class="btn btn-primary">Sign In</a>
+  </nav>
+
+  <!-- HERO HEADER -->
+  <section class="hero-header">
+    <div class="container">
+      <h1 class="hero-title">Claude Skills</h1>
+      <p class="hero-subtitle">Reusable prompt systems for specific tasks. Browse our curated collection of the best Claude skills.</p>
+    </div>
+  </section>
+
+  <!-- SEARCH -->
+  <div class="search-section">
+    <div class="search-container">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="search" class="search-input" placeholder="Search skills...">
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters">
+    <select class="filter-select">
+      <option>All Departments</option>
+      <option>Marketing</option>
+      <option>Sales</option>
+      <option>Design</option>
+      <option>Content</option>
+      <option>Founders</option>
+      <option>Operations</option>
+      <option>Finance</option>
+      <option>Research</option>
+    </select>
+    <select class="filter-select">
+      <option>All Tiers</option>
+      <option>Free</option>
+      <option>Elite</option>
+    </select>
+    <select class="filter-select">
+      <option>All Sources</option>
+      <option>YouTube</option>
+      <option>GitHub</option>
+      <option>Blog</option>
+      <option>Twitter</option>
+    </select>
+  </div>
+
+  <!-- RESULTS COUNT -->
+  <div class="results-count">
+    Showing <span>8</span> skills
+  </div>
+
+  <!-- CARDS GRID -->
+  <div class="cards-grid">
+    <a href="/skills/linkedin-content-system" class="resource-card animate-fadeUp delay-1">
+      <div class="card-header">
+        <h3 class="card-title">LinkedIn Content System</h3>
+        <div class="card-saves">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span>1.2k</span>
+        </div>
+      </div>
+      <p class="card-description">A comprehensive prompt system for creating engaging LinkedIn content with Claude. Generate viral posts in minutes.</p>
+      <div class="card-meta">
+        <span class="badge badge-dept">Marketing</span>
+        <span class="badge badge-free">Free</span>
+      </div>
+      <div class="card-footer">via YouTube</div>
+    </a>
+
+    <a href="/skills/cold-email-writer" class="resource-card animate-fadeUp delay-2">
+      <div class="card-header">
+        <h3 class="card-title">Cold Email Writer Pro</h3>
+        <div class="card-saves">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span>892</span>
+        </div>
+      </div>
+      <p class="card-description">Generate personalized cold emails at scale. Perfect for sales teams looking to automate outreach.</p>
+      <div class="card-meta">
+        <span class="badge badge-dept">Sales</span>
+        <span class="badge badge-free">Free</span>
+      </div>
+      <div class="card-footer">via Blog</div>
+    </a>
+
+    <a href="/skills/ui-design-critic" class="resource-card animate-fadeUp delay-3">
+      <div class="card-header">
+        <h3 class="card-title">UI Design Critic</h3>
+        <div class="card-saves">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span>654</span>
+        </div>
+      </div>
+      <p class="card-description">Get expert design feedback on your UI mockups. Upload a screenshot and get detailed critique from Claude.</p>
+      <div class="card-meta">
+        <span class="badge badge-dept">Design</span>
+        <span class="badge badge-free">Free</span>
+      </div>
+      <div class="card-footer">via GitHub</div>
+    </a>
+
+    <a href="/skills/content-repurposing" class="resource-card animate-fadeUp delay-4">
+      <div class="card-header">
+        <h3 class="card-title">Content Repurposing Engine</h3>
+        <div class="card-saves">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span>2.3k</span>
+        </div>
+      </div>
+      <p class="card-description">Transform one piece of content into 20+ variations for different platforms automatically.</p>
+      <div class="card-meta">
+        <span class="badge badge-dept">Content</span>
+        <span class="badge badge-elite">Elite</span>
+      </div>
+      <div class="card-footer">via YouTube</div>
+    </a>
+
+    <a href="/skills/pitch-deck-generator" class="resource-card animate-fadeUp delay-5">
+      <div class="card-header">
+        <h3 class="card-title">Pitch Deck Generator</h3>
+        <div class="card-saves">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span>1.8k</span>
+        </div>
+      </div>
+      <p class="card-description">Create compelling pitch decks for investors. Input your company details and get a professional deck.</p>
+      <div class="card-meta">
+        <span class="badge badge-dept">Founders</span>
+        <span class="badge badge-free">Free</span>
+      </div>
+      <div class="card-footer">via GitHub</div>
+    </a>
+
+    <a href="/skills/market-research-analyst" class="resource-card animate-fadeUp delay-6">
+      <div class="card-header">
+        <h3 class="card-title">Market Research Analyst</h3>
+        <div class="card-saves">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span>1.4k</span>
+        </div>
+      </div>
+      <p class="card-description">Conduct comprehensive market research in minutes. Analyze competitors, trends, and opportunities.</p>
+      <div class="card-meta">
+        <span class="badge badge-dept">Research</span>
+        <span class="badge badge-elite">Elite</span>
+      </div>
+      <div class="card-footer">via Blog</div>
+    </a>
+  </div>
+
+  <!-- LOAD MORE -->
+  <div class="load-more">
+    <button class="btn btn-outline">Load more skills</button>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="footer-logo"></div>
+        <span class="footer-text">Claude Chief · Not affiliated with Anthropic</span>
+      </div>
+      <div class="footer-links">
+        <a href="/skills">Skills</a>
+        <a href="/blog">Blog</a>
+        <a href="/sign-in">Sign In</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

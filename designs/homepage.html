@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Chief — Best Claude Skills Directory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+    :root {
+      --bg-base: #0D0B0F;
+      --bg-elevated: #131118;
+      --bg-surface: #1A1720;
+      --bg-card: rgba(19, 17, 24, 0.88);
+      --border: rgba(54, 46, 40, 0.5);
+      --border-subtle: rgba(54, 46, 40, 0.3);
+      --terra: #D97757;
+      --terra-hover: #E5886A;
+      --terra-muted: rgba(217, 119, 87, 0.12);
+      --text-primary: #F5F0EB;
+      --text-secondary: #A99E92;
+      --text-muted: #6B6158;
+      --sage: #4ADE80;
+      --sage-muted: rgba(74, 222, 128, 0.12);
+      --amber: #D97757;
+      --amber-muted: rgba(217, 119, 87, 0.12);
+      --blue: #6A9BCC;
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 18px;
+      --radius-xl: 22px;
+      --shadow-card: 0 4px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+      --shadow-hover: 0 8px 32px rgba(217, 119, 87, 0.15), 0 0 0 1px var(--terra);
+      --font-display: 'Fraunces', Georgia, serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --transition: cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== GRAIN TEXTURE ===== */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      mix-blend-mode: overlay;
+    }
+
+    /* ===== LAYOUT ===== */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 0 24px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(13, 11, 15, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 40px;
+      height: 40px;
+      background: var(--terra);
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo-mark::before {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: var(--text-primary);
+      border-radius: 50%;
+      top: 5px;
+      right: 5px;
+    }
+
+    .logo-mark::after {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: var(--text-primary);
+      border-radius: 3px;
+      bottom: 5px;
+      left: 6px;
+      transform: rotate(12deg);
+    }
+
+    .logo-text {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-link {
+      padding: 10px 16px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--text-primary);
+      background: var(--bg-elevated);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.35s var(--transition);
+      min-height: 44px;
+    }
+
+    .btn-primary {
+      background: var(--terra);
+      color: var(--text-primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--terra-hover);
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--terra);
+      border: 1.5px solid var(--terra);
+    }
+
+    .btn-ghost:hover {
+      background: var(--terra-muted);
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 24px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(217, 119, 87, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-glow-2 {
+      position: absolute;
+      bottom: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(106, 155, 204, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      max-width: 720px;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+
+    .hero-badge-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--terra);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.9); }
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(40px, 7vw, 72px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      color: var(--text-primary);
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--terra);
+    }
+
+    .hero-subtitle {
+      font-size: 18px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      max-width: 560px;
+      margin: 0 auto 40px;
+    }
+
+    /* ===== SEARCH BAR ===== */
+    .search-container {
+      max-width: 640px;
+      width: 100%;
+      margin: 0 auto 24px;
+    }
+
+    .search-bar {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 20px;
+      width: 20px;
+      height: 20px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 18px 20px 18px 56px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      font-family: var(--font-body);
+      font-size: 16px;
+      color: var(--text-primary);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transition: all 0.3s ease;
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--terra);
+      box-shadow: 0 0 0 4px var(--terra-muted);
+    }
+
+    .search-cta {
+      position: absolute;
+      right: 8px;
+    }
+
+    /* ===== TRUST ROW ===== */
+    .trust-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .trust-dot {
+      width: 4px;
+      height: 4px;
+      background: var(--text-muted);
+      border-radius: 50%;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .main-content {
+      background: var(--bg-surface);
+      border-radius: 32px 32px 0 0;
+      padding: 64px 0;
+      position: relative;
+    }
+
+    /* ===== TABS ===== */
+    .tabs-container {
+      margin-bottom: 48px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      padding: 6px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .tabs::-webkit-scrollbar { display: none; }
+
+    .tab {
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: transparent;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      min-height: 44px;
+    }
+
+    .tab:hover {
+      color: var(--text-primary);
+      background: var(--bg-card);
+    }
+
+    .tab.active {
+      background: var(--terra);
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* ===== SECTION HEADER ===== */
+    .section-header {
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 16px;
+    }
+
+    /* ===== DEPARTMENT GRID ===== */
+    .dept-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    @media (min-width: 640px) {
+      .dept-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    @media (min-width: 1024px) {
+      .dept-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .dept-card {
+      padding: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      text-decoration: none;
+      transition: all 0.35s var(--transition);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .dept-card:hover {
+      border-color: var(--terra);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .dept-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .dept-count {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .dept-arrow {
+      float: right;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+
+    .dept-card:hover .dept-arrow {
+      color: var(--terra);
+      transform: translateX(4px);
+    }
+
+    /* ===== RESOURCE CARDS ===== */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .cards-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (min-width: 1024px) {
+      .cards-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .resource-card {
+      padding: 22px;
+      background: linear-gradient(135deg, var(--bg-card) 0%, rgba(26, 23, 32, 0.6) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      text-decoration: none;
+      transition: all 0.35s var(--transition);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .resource-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle at top right, var(--terra-muted), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .resource-card:hover {
+      border-color: var(--terra);
+      transform: translateY(-5px);
+      box-shadow: 0 8px 40px rgba(217, 119, 87, 0.12);
+    }
+
+    .resource-card:hover::before {
+      opacity: 1;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
+      flex: 1;
+      padding-right: 12px;
+    }
+
+    .card-saves {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .card-description {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 16px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* ===== BADGES ===== */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .badge-dept {
+      background: var(--terra-muted);
+      color: var(--terra);
+      border: 1px solid rgba(217, 119, 87, 0.2);
+    }
+
+    .badge-free {
+      background: var(--sage-muted);
+      color: var(--sage);
+      border: 1px solid rgba(74, 222, 128, 0.2);
+    }
+
+    .badge-elite {
+      background: var(--amber-muted);
+      color: var(--amber);
+      border: 1px solid rgba(217, 119, 87, 0.2);
+    }
+
+    .badge-featured {
+      background: rgba(106, 155, 204, 0.12);
+      color: var(--blue);
+      border: 1px solid rgba(106, 155, 204, 0.2);
+    }
+
+    /* ===== VIEW ALL CTA ===== */
+    .view-all {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border);
+      padding: 48px 24px;
+    }
+
+    .footer-content {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      md:flex-row;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .footer-logo {
+      width: 32px;
+      height: 32px;
+      background: var(--terra);
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .footer-text {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 640px) {
+      .navbar { padding: 0 16px; }
+      .container { padding: 0 16px; }
+      .hero { padding: 100px 16px 60px; }
+      .hero-title { font-size: 36px; }
+      .search-input { padding: 16px 16px 16px 48px; font-size: 15px; }
+      .section-title { font-size: 24px; }
+      .dept-card { padding: 16px; }
+      .resource-card { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="/" class="nav-logo">
+      <div class="logo-mark"></div>
+      <span class="logo-text">Claude Chief</span>
+    </a>
+    <div class="nav-actions">
+      <a href="/skills" class="nav-link">Skills</a>
+      <a href="/workflows" class="nav-link">Workflows</a>
+      <a href="/mcps" class="nav-link">MCPs</a>
+      <a href="/blog" class="nav-link">Blog</a>
+      <a href="/sign-in" class="btn btn-primary">Sign In</a>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-glow-2"></div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        <span>Best Claude Skills Directory</span>
+      </div>
+      <h1 class="hero-title">
+        Claude is changing everything.<br>
+        <em>Are you keeping up?</em>
+      </h1>
+      <p class="hero-subtitle">
+        Stop hunting across YouTube, GitHub, and Twitter. Claude Chief brings every skill, workflow, MCP, update, and creator into one curated place so you always know what's possible.
+      </p>
+
+      <!-- SEARCH BAR -->
+      <div class="search-container">
+        <div class="search-bar">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input type="search" class="search-input" placeholder="Search skills, workflows, MCPs, creators…">
+          <button class="btn btn-primary search-cta">Explore</button>
+        </div>
+      </div>
+
+      <!-- TRUST ROW -->
+      <div class="trust-row">
+        <div class="trust-item">
+          <span>Free to explore</span>
+        </div>
+        <div class="trust-item">
+          <span class="trust-dot"></span>
+          <span>Updated daily</span>
+        </div>
+        <div class="trust-item">
+          <span class="trust-dot"></span>
+          <span>Curated by humans</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN CONTENT -->
+  <section class="main-content">
+    <div class="container">
+      <!-- TABS -->
+      <div class="tabs-container">
+        <div class="tabs" role="tablist">
+          <button class="tab active" role="tab">All</button>
+          <button class="tab" role="tab">Skills</button>
+          <button class="tab" role="tab">Workflows</button>
+          <button class="tab" role="tab">MCPs</button>
+          <button class="tab" role="tab">Updates</button>
+          <button class="tab" role="tab">Creators</button>
+        </div>
+      </div>
+
+      <!-- SECTION HEADER -->
+      <div class="section-header">
+        <h2 class="section-title">Browse by department</h2>
+        <p class="section-subtitle">Find resources tailored to your role</p>
+      </div>
+
+      <!-- DEPARTMENT GRID -->
+      <div class="dept-grid">
+        <a href="/marketing" class="dept-card">
+          <div class="dept-name">Marketing</div>
+          <div class="dept-count">142 skills</div>
+          <span class="dept-arrow">→</span>
+        </a>
+        <a href="/sales" class="dept-card">
+          <div class="dept-name">Sales</div>
+          <div class="dept-count">98 skills</div>
+          <span class="dept-arrow">→</span>
+        </a>
+        <a href="/design" class="dept-card">
+          <div class="dept-name">Design</div>
+          <div class="dept-count">76 skills</div>
+          <span class="dept-arrow">→</span>
+        </a>
+        <a href="/content" class="dept-card">
+          <div class="dept-name">Content</div>
+          <div class="dept-count">187 skills</div>
+          <span class="dept-arrow">→</span>
+        </a>
+        <a href="/founders" class="dept-card">
+          <div class="dept-name">Founders</div>
+          <div class="dept-count">63 skills</div>
+          <span class="dept-arrow">→</span>
+        </a>
+        <a href="/operations" class="dept-card">
+          <div class="dept-name">Operations</div>
+          <div class="dept-count">54 skills</div>
+          <span class="dept-arrow">→</span>
+        </a>
+        <a href="/finance" class="dept-card">
+          <div class="dept-name">Finance</div>
+          <div class="dept-count">41 skills</div>
+          <span class="dept-arrow">→</span>
+        </a>
+        <a href="/research" class="dept-card">
+          <div class="dept-name">Research</div>
+          <div class="dept-count">88 skills</div>
+          <span class="dept-arrow">→</span>
+        </a>
+      </div>
+
+      <!-- SECTION HEADER -->
+      <div class="section-header" style="margin-top: 48px;">
+        <h2 class="section-title">Featured skills</h2>
+        <p class="section-subtitle">The most popular resources in the community</p>
+      </div>
+
+      <!-- RESOURCE CARDS -->
+      <div class="cards-grid">
+        <a href="/skills/linkedin-content-system" class="resource-card">
+          <div class="card-header">
+            <h3 class="card-title">LinkedIn Content System</h3>
+            <div class="card-saves">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span>1.2k</span>
+            </div>
+          </div>
+          <p class="card-description">A comprehensive prompt system for creating engaging LinkedIn content with Claude. Generate viral posts in minutes.</p>
+          <div class="card-meta">
+            <span class="badge badge-dept">Marketing</span>
+            <span class="badge badge-free">Free</span>
+          </div>
+        </a>
+
+        <a href="/skills/cold-email-writer" class="resource-card">
+          <div class="card-header">
+            <h3 class="card-title">Cold Email Writer Pro</h3>
+            <div class="card-saves">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span>892</span>
+            </div>
+          </div>
+          <p class="card-description">Generate personalized cold emails at scale. Perfect for sales teams looking to automate outreach.</p>
+          <div class="card-meta">
+            <span class="badge badge-dept">Sales</span>
+            <span class="badge badge-free">Free</span>
+          </div>
+        </a>
+
+        <a href="/skills/ui-design-critic" class="resource-card">
+          <div class="card-header">
+            <h3 class="card-title">UI Design Critic</h3>
+            <div class="card-saves">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span>654</span>
+            </div>
+          </div>
+          <p class="card-description">Get expert design feedback on your UI mockups. Upload a screenshot and get detailed critique from Claude.</p>
+          <div class="card-meta">
+            <span class="badge badge-dept">Design</span>
+            <span class="badge badge-free">Free</span>
+          </div>
+        </a>
+
+        <a href="/skills/content-repurposing" class="resource-card">
+          <div class="card-header">
+            <h3 class="card-title">Content Repurposing Engine</h3>
+            <div class="card-saves">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span>2.3k</span>
+            </div>
+          </div>
+          <p class="card-description">Transform one piece of content into 20+ variations for different platforms automatically.</p>
+          <div class="card-meta">
+            <span class="badge badge-dept">Content</span>
+            <span class="badge badge-elite">Elite</span>
+          </div>
+        </a>
+
+        <a href="/skills/pitch-deck-generator" class="resource-card">
+          <div class="card-header">
+            <h3 class="card-title">Pitch Deck Generator</h3>
+            <div class="card-saves">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span>1.8k</span>
+            </div>
+          </div>
+          <p class="card-description">Create compelling pitch decks for investors. Input your company details and get a professional deck.</p>
+          <div class="card-meta">
+            <span class="badge badge-dept">Founders</span>
+            <span class="badge badge-free">Free</span>
+          </div>
+        </a>
+
+        <a href="/workflows/automated-content" class="resource-card">
+          <div class="card-header">
+            <h3 class="card-title">Automated Content Pipeline</h3>
+            <div class="card-saves">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span>1.5k</span>
+            </div>
+          </div>
+          <p class="card-description">A complete workflow for generating, editing, and publishing content automatically using Claude + Notion.</p>
+          <div class="card-meta">
+            <span class="badge badge-dept">Content</span>
+            <span class="badge badge-featured">Workflow</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- VIEW ALL -->
+      <div class="view-all">
+        <a href="/skills" class="btn btn-ghost">View all skills →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="footer-logo"></div>
+        <span class="footer-text">Claude Chief · Not affiliated with Anthropic</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- TAB SCRIPT -->
+  <script>
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

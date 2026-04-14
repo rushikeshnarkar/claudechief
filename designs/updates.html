@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anthropic Updates — Claude News & Releases | Claude Chief</title>
+  <meta name="description" content="Stay updated with the latest Claude releases, Anthropic announcements, and AI industry news.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg: { base: '#0D0B0F', surface: '#1A1720', elevated: '#131118' },
+            border: { DEFAULT: 'rgba(54, 46, 40, 0.5)' },
+            terra: { DEFAULT: '#D97757', hover: '#E5886A' },
+            text: { primary: '#F5F0EB', secondary: '#A99E92', muted: '#6B6158' }
+          },
+          fontFamily: {
+            display: ['Fraunces', 'Georgia', 'serif'],
+            sans: ['DM Sans', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { -webkit-font-smoothing: antialiased; }
+    body { background-color: #0D0B0F; }
+
+    .glass-card {
+      background: linear-gradient(135deg, rgba(19,17,24,0.88) 0%, rgba(26,23,32,0.6) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(54, 46, 40, 0.5);
+      border-radius: 22px;
+    }
+
+    .spring-hover {
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .spring-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 40px rgba(217, 119, 87, 0.12), 0 0 0 1px rgba(217, 119, 87, 0.3);
+    }
+
+    .animate-fadeUp {
+      animation: fadeUp 0.5s ease-out forwards;
+      opacity: 0;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #D97757 0%, #C15F3C 100%);
+      color: #F5F0EB;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #E5886A 0%, #D97757 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(217, 119, 87, 0.35);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: #F5F0EB;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      border: 1px solid rgba(54, 46, 40, 0.5);
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-outline:hover {
+      border-color: #D97757;
+      background: rgba(217, 119, 87, 0.08);
+    }
+
+    .grain::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    .impact-high {
+      background: rgba(239, 68, 68, 0.12);
+      color: #EF4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    .impact-medium {
+      background: rgba(234, 179, 8, 0.12);
+      color: #EAB308;
+      border: 1px solid rgba(234, 179, 8, 0.2);
+    }
+    .impact-low {
+      background: rgba(74, 222, 128, 0.12);
+      color: #4ADE80;
+      border: 1px solid rgba(74, 222, 128, 0.2);
+    }
+  </style>
+</head>
+<body class="grain text-text-primary font-sans">
+  <!-- NAVBAR -->
+  <nav class="fixed top-0 left-0 right-0 z-50 h-[72px] flex items-center px-6 lg:px-8 bg-[#0D0B0F]/[0.85] backdrop-blur-xl border-b border-[rgba(54,46,40,0.3)]">
+    <div class="container max-w-7xl mx-auto flex items-center justify-between w-full">
+      <a href="index.html" class="flex items-center gap-3">
+        <div class="relative w-10 h-10">
+          <div class="absolute inset-0 bg-[#D97757] rounded-[10px] overflow-hidden">
+            <div class="absolute top-[5px] right-[5px] w-3.5 h-3.5 bg-[#F5F0EB] rounded-full"></div>
+            <div class="absolute bottom-[5px] left-[6px] w-2.5 h-2.5 bg-[#F5F0EB] rounded-[3px] rotate-12"></div>
+          </div>
+        </div>
+        <span class="font-display text-xl font-bold text-[#F5F0EB] tracking-tight">Claude Chief</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-1">
+        <a href="skills.html" class="px-4 py-2.5 text-sm font-medium text-[#A99E92] hover:text-[#F5F0EB] hover:bg-[#131118] rounded-lg transition-all">Skills</a>
+        <a href="workflows.html" class="px-4 py-2.5 text-sm font-medium text-[#A99E92] hover:text-[#F5F0EB] hover:bg-[#131118] rounded-lg transition-all">Workflows</a>
+        <a href="mcps.html" class="px-4 py-2.5 text-sm font-medium text-[#A99E92] hover:text-[#F5F0EB] hover:bg-[#131118] rounded-lg transition-all">MCPs</a>
+        <a href="updates.html" class="px-4 py-2.5 text-sm font-semibold text-[#F5F0EB] bg-[#D97757] rounded-lg">Updates</a>
+        <a href="creators.html" class="px-4 py-2.5 text-sm font-medium text-[#A99E92] hover:text-[#F5F0EB] hover:bg-[#131118] rounded-lg transition-all">Creators</a>
+        <a href="blog.html" class="px-4 py-2.5 text-sm font-medium text-[#A99E92] hover:text-[#F5F0EB] hover:bg-[#131118] rounded-lg transition-all">Blog</a>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="sign-in.html" class="btn-outline text-sm h-11 px-5 flex items-center">Sign In</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO HEADER -->
+  <section class="pt-32 pb-10 px-4 sm:px-6 lg:px-8 bg-[#1A1720]">
+    <div class="container max-w-4xl mx-auto">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 bg-[#D97757]/20 rounded-xl flex items-center justify-center">
+          <svg class="w-5 h-5 text-[#D97757]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        </div>
+        <span class="text-[#6B6158] text-sm">Anthropic news & releases</span>
+      </div>
+      <h1 class="font-display text-3xl sm:text-4xl font-bold text-[#F5F0EB] tracking-tight mb-3">Updates</h1>
+      <p class="text-[#A99E92] text-lg max-w-2xl leading-relaxed">
+        Stay informed about the latest Claude releases, Anthropic announcements, and AI industry developments.
+      </p>
+    </div>
+  </section>
+
+  <!-- UPDATES TIMELINE -->
+  <section class="bg-[#0D0B0F] px-4 sm:px-6 lg:px-8 py-12">
+    <div class="container max-w-4xl mx-auto">
+      <!-- Timeline -->
+      <div class="relative">
+        <!-- Vertical line -->
+        <div class="absolute left-4 sm:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-[rgba(217,119,87,0.4)] via-[rgba(217,119,87,0.2)] to-[rgba(217,119,87,0.05)]"></div>
+
+        <div class="space-y-8">
+          <!-- Update: June 2025 -->
+          <div class="relative pl-12 sm:pl-16 animate-fadeUp">
+            <div class="absolute left-0 sm:left-4 top-0 w-8 h-8 rounded-full bg-[#D97757] flex items-center justify-center z-10">
+              <div class="w-2 h-2 rounded-full bg-[#F5F0EB]"></div>
+            </div>
+
+            <div class="glass-card p-6 spring-hover">
+              <div class="flex items-center gap-3 mb-3 flex-wrap">
+                <span class="text-[10px] font-semibold tracking-wider uppercase text-[#6B6158]">June 2025</span>
+                <span class="inline-flex items-center px-3 py-1 bg-[rgba(217,119,87,0.12)] text-[#D97757] text-[10px] font-semibold tracking-wider uppercase rounded-full border border-[rgba(217,119,87,0.2)]">Model Release</span>
+                <span class="inline-flex items-center px-2 py-1 impact-high text-[10px] font-semibold tracking-wider uppercase rounded-full">High Impact</span>
+              </div>
+
+              <a href="updates-detail.html" class="block">
+                <h2 class="font-display text-xl font-bold text-[#F5F0EB] mb-2 hover:text-[#D97757] transition-colors">Claude 3.5 Sonnet</h2>
+                <p class="text-[#A99E92] text-sm leading-relaxed mb-4">
+                  Major release featuring improved reasoning, 200K context window, and enhanced code generation.
+                </p>
+              </a>
+
+              <a href="updates-detail.html" class="inline-flex items-center gap-2 text-sm text-[#D97757] hover:text-[#E5886A] transition-colors">
+                Read more
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Update: May 2025 -->
+          <div class="relative pl-12 sm:pl-16 animate-fadeUp" style="animation-delay: 100ms">
+            <div class="absolute left-0 sm:left-4 top-0 w-8 h-8 rounded-full bg-[#1A1720] border-2 border-[rgba(217,119,87,0.3)] flex items-center justify-center z-10">
+              <div class="w-2 h-2 rounded-full bg-[#6B6158]"></div>
+            </div>
+
+            <div class="glass-card p-6 spring-hover opacity-80">
+              <div class="flex items-center gap-3 mb-3 flex-wrap">
+                <span class="text-[10px] font-semibold tracking-wider uppercase text-[#6B6158]">May 2025</span>
+                <span class="inline-flex items-center px-3 py-1 bg-[rgba(234,179,8,0.12)] text-[#EAB308] text-[10px] font-semibold tracking-wider uppercase rounded-full border border-[rgba(234,179,8,0.2)]">API Update</span>
+                <span class="inline-flex items-center px-2 py-1 impact-medium text-[10px] font-semibold tracking-wider uppercase rounded-full">Medium</span>
+              </div>
+
+              <a href="updates-detail.html" class="block">
+                <h2 class="font-display text-xl font-bold text-[#F5F0EB] mb-2 hover:text-[#D97757] transition-colors">New API Parameters</h2>
+                <p class="text-[#A99E92] text-sm leading-relaxed mb-4">
+                  Added support for custom temperature and top_p settings per request.
+                </p>
+              </a>
+
+              <a href="updates-detail.html" class="inline-flex items-center gap-2 text-sm text-[#A99E92] hover:text-[#D97757] transition-colors">
+                Read more
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Update: April 2025 -->
+          <div class="relative pl-12 sm:pl-16 animate-fadeUp" style="animation-delay: 200ms">
+            <div class="absolute left-0 sm:left-4 top-0 w-8 h-8 rounded-full bg-[#1A1720] border-2 border-[rgba(217,119,87,0.3)] flex items-center justify-center z-10">
+              <div class="w-2 h-2 rounded-full bg-[#6B6158]"></div>
+            </div>
+
+            <div class="glass-card p-6 spring-hover opacity-80">
+              <div class="flex items-center gap-3 mb-3 flex-wrap">
+                <span class="text-[10px] font-semibold tracking-wider uppercase text-[#6B6158]">April 2025</span>
+                <span class="inline-flex items-center px-3 py-1 bg-[rgba(74,222,128,0.12)] text-[#4ADE80] text-[10px] font-semibold tracking-wider uppercase rounded-full border border-[rgba(74,222,128,0.2)]">Feature</span>
+                <span class="inline-flex items-center px-2 py-1 impact-low text-[10px] font-semibold tracking-wider uppercase rounded-full">Low</span>
+              </div>
+
+              <a href="updates-detail.html" class="block">
+                <h2 class="font-display text-xl font-bold text-[#F5F0EB] mb-2 hover:text-[#D97757] transition-colors">Claude Team Plan Launch</h2>
+                <p class="text-[#A99E92] text-sm leading-relaxed mb-4">
+                  New team tier with higher rate limits, admin controls, and organization management.
+                </p>
+              </a>
+
+              <a href="updates-detail.html" class="inline-flex items-center gap-2 text-sm text-[#A99E92] hover:text-[#D97757] transition-colors">
+                Read more
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Update: March 2025 -->
+          <div class="relative pl-12 sm:pl-16 animate-fadeUp" style="animation-delay: 300ms">
+            <div class="absolute left-0 sm:left-4 top-0 w-8 h-8 rounded-full bg-[#1A1720] border-2 border-[rgba(217,119,87,0.3)] flex items-center justify-center z-10">
+              <div class="w-2 h-2 rounded-full bg-[#6B6158]"></div>
+            </div>
+
+            <div class="glass-card p-6 spring-hover opacity-80">
+              <div class="flex items-center gap-3 mb-3 flex-wrap">
+                <span class="text-[10px] font-semibold tracking-wider uppercase text-[#6B6158]">March 2025</span>
+                <span class="inline-flex items-center px-3 py-1 bg-[rgba(217,119,87,0.12)] text-[#D97757] text-[10px] font-semibold tracking-wider uppercase rounded-full border border-[rgba(217,119,87,0.2)]">Model Release</span>
+                <span class="inline-flex items-center px-2 py-1 impact-high text-[10px] font-semibold tracking-wider uppercase rounded-full">High Impact</span>
+              </div>
+
+              <a href="updates-detail.html" class="block">
+                <h2 class="font-display text-xl font-bold text-[#F5F0EB] mb-2 hover:text-[#D97757] transition-colors">Claude 3 Opus</h2>
+                <p class="text-[#A99E92] text-sm leading-relaxed mb-4">
+                  Most intelligent model yet with 200K context and state-of-the-art reasoning.
+                </p>
+              </a>
+
+              <a href="updates-detail.html" class="inline-flex items-center gap-2 text-sm text-[#A99E92] hover:text-[#D97757] transition-colors">
+                Read more
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Update: February 2025 -->
+          <div class="relative pl-12 sm:pl-16 animate-fadeUp" style="animation-delay: 400ms">
+            <div class="absolute left-0 sm:left-4 top-0 w-8 h-8 rounded-full bg-[#1A1720] border-2 border-[rgba(217,119,87,0.3)] flex items-center justify-center z-10">
+              <div class="w-2 h-2 rounded-full bg-[#6B6158]"></div>
+            </div>
+
+            <div class="glass-card p-6 spring-hover opacity-80">
+              <div class="flex items-center gap-3 mb-3 flex-wrap">
+                <span class="text-[10px] font-semibold tracking-wider uppercase text-[#6B6158]">February 2025</span>
+                <span class="inline-flex items-center px-3 py-1 bg-[rgba(74,222,128,0.12)] text-[#4ADE80] text-[10px] font-semibold tracking-wider uppercase rounded-full border border-[rgba(74,222,128,0.2)]">Feature</span>
+                <span class="inline-flex items-center px-2 py-1 impact-low text-[10px] font-semibold tracking-wider uppercase rounded-full">Low</span>
+              </div>
+
+              <a href="updates-detail.html" class="block">
+                <h2 class="font-display text-xl font-bold text-[#F5F0EB] mb-2 hover:text-[#D97757] transition-colors">MCP Gallery Launch</h2>
+                <p class="text-[#A99E92] text-sm leading-relaxed mb-4">
+                  Browse and install Model Context Protocols from the official gallery.
+                </p>
+              </a>
+
+              <a href="updates-detail.html" class="inline-flex items-center gap-2 text-sm text-[#A99E92] hover:text-[#D97757] transition-colors">
+                Read more
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Load More -->
+      <div class="mt-12 text-center">
+        <button class="btn-primary px-8">Load more updates</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-[#1A1720] border-t border-[rgba(54,46,40,0.3)] px-6 sm:px-8 py-12">
+    <div class="container max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-[#D97757] rounded-lg relative overflow-hidden">
+          <div class="absolute top-[4px] right-[4px] w-2 h-2 bg-[#F5F0EB] rounded-full"></div>
+          <div class="absolute bottom-[4px] left-[4px] w-1.5 h-1.5 bg-[#F5F0EB] rounded-[2px] rotate-12"></div>
+        </div>
+        <span class="text-[#6B6158] text-sm">Claude Chief · Not affiliated with Anthropic</span>
+      </div>
+
+      <div class="flex items-center gap-6 text-sm text-[#6B6158]">
+        <a href="skills.html" class="hover:text-[#A99E92] transition-colors">Skills</a>
+        <a href="workflows.html" class="hover:text-[#A99E92] transition-colors">Workflows</a>
+        <a href="blog.html" class="hover:text-[#A99E92] transition-colors">Blog</a>
+        <a href="sign-in.html" class="hover:text-[#A99E92] transition-colors">Sign In</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
