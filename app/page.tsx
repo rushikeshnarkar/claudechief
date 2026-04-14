@@ -2,62 +2,13 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Search, ArrowRight, Bookmark, Zap, Shield } from 'lucide-react';
 import { DEPARTMENTS } from '@/lib/constants';
+import { createClient } from '@/lib/supabase/server';
+import { formatNumber } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'Claude Chief — Best Claude Skills Directory',
   description: 'Stop hunting across YouTube, GitHub, and Twitter. Claude Chief brings every skill, workflow, MCP, update, and creator into one curated place.',
 };
-
-const FEATURED_SKILLS = [
-  {
-    title: 'LinkedIn Content System',
-    description: 'A comprehensive prompt system for creating engaging LinkedIn content with Claude. Generate viral posts in minutes.',
-    department: 'Marketing',
-    tier: 'free' as const,
-    saves: '1.2k',
-    href: '/skills/linkedin-content-system',
-  },
-  {
-    title: 'Cold Email Writer Pro',
-    description: 'Generate personalized cold emails at scale. Perfect for sales teams looking to automate outreach.',
-    department: 'Sales',
-    tier: 'free' as const,
-    saves: '892',
-    href: '/skills/cold-email-writer',
-  },
-  {
-    title: 'UI Design Critic',
-    description: 'Get expert design feedback on your UI mockups. Upload a screenshot and get detailed critique.',
-    department: 'Design',
-    tier: 'free' as const,
-    saves: '654',
-    href: '/skills/ui-design-critic',
-  },
-  {
-    title: 'Content Repurposing Engine',
-    description: 'Transform one piece of content into 20+ variations for different platforms automatically.',
-    department: 'Content',
-    tier: 'elite' as const,
-    saves: '2.3k',
-    href: '/skills/content-repurposing',
-  },
-  {
-    title: 'Pitch Deck Generator',
-    description: 'Create compelling pitch decks for investors. Input your company details and get a professional deck.',
-    department: 'Founders',
-    tier: 'free' as const,
-    saves: '1.8k',
-    href: '/skills/pitch-deck-generator',
-  },
-  {
-    title: 'Automated Content Pipeline',
-    description: 'A complete workflow for generating, editing, and publishing content automatically using Claude + Notion.',
-    department: 'Content',
-    tier: 'workflow' as const,
-    saves: '1.5k',
-    href: '/workflows/automated-content',
-  },
-];
 
 const RESOURCE_TABS = [
   { id: 'all', label: 'All' },
@@ -68,7 +19,30 @@ const RESOURCE_TABS = [
   { id: 'creators', label: 'Creators' },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const supabase = await createClient();
+
+  // Fetch featured skills (top 6 by save count)
+  const { data: featuredSkills } = await supabase
+    .from('skills')
+    .select('*')
+    .order('save_count', { ascending: false })
+    .limit(6);
+
+  // Fetch counts for each content type
+  const [skillsCount, workflowsCount, mcpsCount, updatesCount, creatorsCount] = await Promise.all([
+    supabase.from('skills').select('*', { count: 'exact', head: true }),
+    supabase.from('workflows').select('*', { count: 'exact', head: true }),
+    supabase.from('mcps').select('*', { count: 'exact', head: true }),
+    supabase.from('updates').select('*', { count: 'exact', head: true }),
+    supabase.from('creators').select('*', { count: 'exact', head: true }),
+  ]);
+
+  const totalResources =
+    (skillsCount.count ?? 0) +
+    (workflowsCount.count ?? 0) +
+    (mcpsCount.count ?? 0);
+
   return (
     <>
       {/* ─── HERO SECTION ─── */}
@@ -83,7 +57,7 @@ export default function HomePage() {
           {/* Capsule Badge */}
           <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-[#131118] border border-[rgba(54,46,40,0.5)] rounded-full text-sm font-medium text-[#A99E92] mb-8 animate-fadeUp">
             <span className="w-2 h-2 bg-[#D97757] rounded-full animate-pulse" />
-            <span>Best Claude Skills Directory</span>
+            <span>{totalResources} resources available</span>
           </div>
 
           {/* Headline */}
@@ -185,10 +159,10 @@ export default function HomePage() {
 
           {/* Resource Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-fadeUp">
-            {FEATURED_SKILLS.map((skill) => (
+            {(featuredSkills ?? []).map((skill) => (
               <Link
-                key={skill.title}
-                href={skill.href}
+                key={skill.id}
+                href={`/skills/${skill.slug}`}
                 className="group relative p-6 bg-[linear-gradient(135deg,rgba(19,17,24,0.88)_0%,rgba(26,23,32,0.6)_100%)] border border-[rgba(54,46,40,0.5)] rounded-[22px] backdrop-blur-xl overflow-hidden hover:border-[#D97757] hover:-translate-y-[5px] spring-hover"
               >
                 {/* Decorative Glow */}
@@ -201,7 +175,7 @@ export default function HomePage() {
                   </h3>
                   <div className="flex items-center gap-1.5 text-xs text-[#6B6158] flex-shrink-0">
                     <Bookmark className="w-3.5 h-3.5" />
-                    <span>{skill.saves}</span>
+                    <span>{formatNumber(skill.save_count)}</span>
                   </div>
                 </div>
 
@@ -213,7 +187,7 @@ export default function HomePage() {
                 {/* Meta Tags */}
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[rgba(217,119,87,0.12)] text-[#D97757] text-[10px] font-semibold tracking-wider uppercase rounded-full border border-[rgba(217,119,87,0.2)]">
-                    {skill.department}
+                    {skill.department.charAt(0).toUpperCase() + skill.department.slice(1)}
                   </span>
                   <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-semibold tracking-wider uppercase rounded-full border ${
                     skill.tier === 'free'
@@ -222,7 +196,7 @@ export default function HomePage() {
                       ? 'bg-[rgba(201,134,42,0.12)] text-[#D97757] border-[rgba(201,134,42,0.2)]'
                       : 'bg-[rgba(106,155,204,0.12)] text-[#6A9BCC] border-[rgba(106,155,204,0.2)]'
                   }`}>
-                    {skill.tier === 'workflow' ? 'Workflow' : skill.tier === 'elite' ? 'Elite' : 'Free'}
+                    {skill.tier === 'elite' ? 'Elite' : 'Free'}
                   </span>
                 </div>
               </Link>
