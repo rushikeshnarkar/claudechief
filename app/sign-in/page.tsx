@@ -1,13 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
 export default function SignInPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#0D0B0F]" />}>
+      <SignInForm />
+    </Suspense>
+  );
+}
+
+function SignInForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/admin';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -33,7 +43,7 @@ export default function SignInPage() {
     } else {
       setSuccess(true);
       setTimeout(() => {
-        router.push('/profile');
+        router.push(redirectTo);
         router.refresh();
       }, 1000);
     }
