@@ -439,7 +439,7 @@ insert into public.pages (title, slug, page_type, status, excerpt, meta_title, m
   'A clear guide explaining what Claude Skills are, how Workflows differ, and when to use each one for maximum productivity.',
   'Claude Skills vs Workflows — What''s the Difference? | Claude Chief',
   'Understand the difference between Claude Skills and Workflows. Learn when to use prompt-based skills versus multi-step automated workflows.',
-  '["Claude","Skills","Workflows","Guide"]'::jsonb,
+  '["Claude","Skills","Workflows","Guide"]'::text[],
   '[
     {
       "id": "hero-1",
@@ -506,7 +506,7 @@ insert into public.pages (title, slug, page_type, status, excerpt, meta_title, m
   'The best Claude skills every marketing team should be using right now — from content creation to competitive analysis and social media automation.',
   'Top 10 Claude Skills for Marketing Teams in 2025 | Claude Chief',
   'Discover the best Claude skills for marketing teams. From LinkedIn content to SEO optimization and competitor research — save hours every week.',
-  '["Claude","Marketing","Skills","Content","SEO"]'::jsonb,
+  '["Claude","Marketing","Skills","Content","SEO"]'::text[],
   '[
     {
       "id": "hero-1",
@@ -566,7 +566,7 @@ insert into public.pages (title, slug, page_type, status, excerpt, meta_title, m
   'Everything you need to know about Model Context Protocol (MCP) servers — what they are, how to install them, and the best MCPs for every use case.',
   'Complete Guide to Claude MCPs in 2025 | Claude Chief',
   'Learn what Claude MCPs are, how to install them, and which Model Context Protocol servers will supercharge your workflow in 2025.',
-  '["Claude","MCPs","Integrations","Developer"]'::jsonb,
+  '["Claude","MCPs","Integrations","Developer"]'::text[],
   '[
     {
       "id": "hero-1",
