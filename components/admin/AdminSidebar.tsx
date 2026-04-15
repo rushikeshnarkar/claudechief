@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   Bookmark,
@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   Menu,
 } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
 
 const ADMIN_NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -26,8 +27,16 @@ const ADMIN_NAV = [
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push('/');
+    router.refresh();
+  };
 
   return (
     <>
@@ -92,6 +101,13 @@ export default function AdminSidebar() {
             <LogOut className="w-5 h-5 flex-shrink-0" />
             {!collapsed && <span>Back to site</span>}
           </Link>
+          <button
+            onClick={handleSignOut}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#A99E92] hover:text-[#EF4444] hover:bg-[rgba(239,68,68,0.08)] transition-all"
+          >
+            <LogOut className="w-5 h-5 flex-shrink-0" />
+            {!collapsed && <span>Sign out</span>}
+          </button>
         </div>
       </aside>
 
