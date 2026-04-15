@@ -13,6 +13,8 @@ interface Update {
   update_type: string;
   impact_level: string;
   date: string;
+  summary: string;
+  source_link: string;
   created_at: string;
 }
 
@@ -38,7 +40,7 @@ export default function AdminUpdatesPage() {
     const supabase = createClient();
     const { data } = await supabase
       .from('updates')
-      .select('id, title, update_type, impact_level, date, created_at')
+      .select('id, title, update_type, impact_level, date, summary, source_link, created_at')
       .order('date', { ascending: false });
     setUpdates(data ?? []);
     setLoading(false);
@@ -51,7 +53,7 @@ export default function AdminUpdatesPage() {
   const handleEdit = (u: Update) => {
     setEditingId(u.id);
     setForm({ title: u.title, date: u.date, update_type: u.update_type,
-      impact_level: u.impact_level, summary: '', source_link: '' });
+      impact_level: u.impact_level, summary: u.summary ?? '', source_link: u.source_link ?? '' });
     setShowForm(true);
   };
 

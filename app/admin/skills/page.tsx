@@ -16,6 +16,10 @@ interface Skill {
   save_count: number;
   source_type: string;
   creator_name: string;
+  description?: string;
+  source_url?: string;
+  creator_link?: string;
+  prompt_preview?: string;
   created_at: string;
 }
 
@@ -42,7 +46,7 @@ export default function AdminSkillsPage() {
     const supabase = createClient();
     const { data } = await supabase
       .from('skills')
-      .select('id, title, department, tier, save_count, source_type, creator_name, created_at')
+      .select('id, title, department, tier, save_count, source_type, creator_name, description, source_url, creator_link, prompt_preview, created_at')
       .order('created_at', { ascending: false });
     setSkills(data ?? []);
     setLoading(false);
@@ -58,9 +62,15 @@ export default function AdminSkillsPage() {
   const handleEdit = (skill: Skill) => {
     setEditingId(skill.id);
     setForm({
-      title: skill.title, description: '', department: skill.department,
-      tier: skill.tier, source_type: skill.source_type, source_url: '',
-      creator_name: skill.creator_name, creator_link: '', prompt_preview: '',
+      title: skill.title,
+      description: (skill as any).description ?? '',
+      department: skill.department,
+      tier: skill.tier,
+      source_type: skill.source_type,
+      source_url: (skill as any).source_url ?? '',
+      creator_name: skill.creator_name,
+      creator_link: (skill as any).creator_link ?? '',
+      prompt_preview: (skill as any).prompt_preview ?? '',
     });
     setShowForm(true);
   };

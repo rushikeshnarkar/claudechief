@@ -14,13 +14,18 @@ interface Workflow {
   difficulty: string;
   save_count: number;
   creator_name: string;
+  description?: string;
+  creator_link?: string;
+  tier?: string;
+  time_estimate?: string;
+  source_url?: string;
   created_at: string;
 }
 
 interface WorkflowFormData {
   title: string; description: string; department: string; difficulty: string;
-  time_estimate: string; creator_name: string; source_url: string;
-  steps: string; tools: string;
+  time_estimate: string; creator_name: string; creator_link: string; source_url: string;
+  steps: string; tools: string; tier: string;
 }
 
 export default function AdminWorkflowsPage() {
@@ -33,14 +38,15 @@ export default function AdminWorkflowsPage() {
   const [saved, setSaved] = useState(false);
   const [form, setForm] = useState<WorkflowFormData>({
     title: '', description: '', department: 'content', difficulty: 'medium',
-    time_estimate: '', creator_name: '', source_url: '', steps: '', tools: '',
+    time_estimate: '', creator_name: '', creator_link: '', source_url: '',
+    steps: '', tools: '', tier: 'free',
   });
 
   const fetchWorkflows = useCallback(async () => {
     const supabase = createClient();
     const { data } = await supabase
       .from('workflows')
-      .select('id, title, department, difficulty, save_count, creator_name, created_at')
+      .select('id, title, department, difficulty, save_count, creator_name, description, creator_link, tier, time_estimate, source_url, created_at')
       .order('created_at', { ascending: false });
     setWorkflows(data ?? []);
     setLoading(false);
@@ -56,8 +62,17 @@ export default function AdminWorkflowsPage() {
   const handleEdit = (wf: Workflow) => {
     setEditingId(wf.id);
     setForm({
-      title: wf.title, description: '', department: wf.department, difficulty: wf.difficulty,
-      time_estimate: '', creator_name: wf.creator_name, source_url: '', steps: '', tools: '',
+      title: wf.title,
+      description: (wf as any).description ?? '',
+      department: wf.department,
+      difficulty: wf.difficulty,
+      time_estimate: (wf as any).time_estimate ?? '',
+      creator_name: wf.creator_name,
+      creator_link: (wf as any).creator_link ?? '',
+      source_url: (wf as any).source_url ?? '',
+      tier: (wf as any).tier ?? 'free',
+      steps: Array.isArray((wf as any).steps) ? (wf as any).steps.join('\n') : '',
+      tools: Array.isArray((wf as any).tools) ? (wf as any).tools.join(', ') : '',
     });
     setShowForm(true);
   };
@@ -65,7 +80,8 @@ export default function AdminWorkflowsPage() {
   const handleNew = () => {
     setEditingId(null);
     setForm({ title: '', description: '', department: 'content', difficulty: 'medium',
-      time_estimate: '', creator_name: '', source_url: '', steps: '', tools: '' });
+      time_estimate: '', creator_name: '', creator_link: '', source_url: '',
+      steps: '', tools: '', tier: 'free' });
     setShowForm(true);
   };
 
@@ -163,11 +179,15 @@ export default function AdminWorkflowsPage() {
               <div><label className="input-label">Description *</label><textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} className="input resize-none" rows={3} placeholder="A brief description…" /></div>
               <div className="grid grid-cols-2 gap-4">
                 <div><label className="input-label">Department</label><select value={form.department} onChange={e => setForm({ ...form, department: e.target.value })} className="input cursor-pointer">{DEPARTMENTS.map(d => <option key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</option>)}</select></div>
-                <div><label className="input-label">Difficulty</label><select value={form.difficulty} onChange={e => setForm({ ...form, difficulty: e.target.value })} className="input cursor-pointer">{DIFFICULTIES.map(d => <option key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</option>)}</select></div>
+                <div><label className="input-label">Tier</label><select value={form.tier} onChange={e => setForm({ ...form, tier: e.target.value })} className="input cursor-pointer"><option value="free">Free</option><option value="elite">Elite</option></select></div>
               </div>
               <div className="grid grid-cols-2 gap-4">
+                <div><label className="input-label">Difficulty</label><select value={form.difficulty} onChange={e => setForm({ ...form, difficulty: e.target.value })} className="input cursor-pointer">{DIFFICULTIES.map(d => <option key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</option>)}</select></div>
                 <div><label className="input-label">Time Estimate</label><input value={form.time_estimate} onChange={e => setForm({ ...form, time_estimate: e.target.value })} className="input" placeholder="30 minutes" /></div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
                 <div><label className="input-label">Creator Name</label><input value={form.creator_name} onChange={e => setForm({ ...form, creator_name: e.target.value })} className="input" placeholder="Sarah Mitchell" /></div>
+                <div><label className="input-label">Creator Link</label><input value={form.creator_link} onChange={e => setForm({ ...form, creator_link: e.target.value })} className="input" placeholder="https://twitter.com/..." /></div>
               </div>
               <div><label className="input-label">Source URL</label><input value={form.source_url} onChange={e => setForm({ ...form, source_url: e.target.value })} className="input" placeholder="https://github.com/..." /></div>
               <div><label className="input-label">Steps (one per line)</label><textarea value={form.steps} onChange={e => setForm({ ...form, steps: e.target.value })} className="input resize-none font-mono text-sm" rows={4} placeholder="Step 1&#10;Step 2&#10;Step 3" /></div>

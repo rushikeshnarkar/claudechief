@@ -60,6 +60,22 @@ export default async function UpdateDetailPage({ params }: UpdatePageProps) {
 
   return (
     <>
+      {/* JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            headline: update.title,
+            description: update.summary,
+            datePublished: update.date,
+            articleSection: update.update_type,
+            keywords: `Claude, ${update.update_type}, AI, Anthropic`,
+          }),
+        }}
+      />
+
       {/* ─── HERO ─── */}
       <section className="pt-28 pb-8 px-4 sm:px-6 lg:px-8 bg-[#1A1720]">
         <div className="container max-w-4xl mx-auto">

@@ -51,6 +51,24 @@ export default async function MCPDetailPage({ params }: MCPPageProps) {
 
   return (
     <>
+      {/* JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'SoftwareApplication',
+            name: mcp.title,
+            description: mcp.description || `${mcp.title} — connect Claude to ${mcp.connected_service}`,
+            applicationCategory: 'DeveloperApplication',
+            operatingSystem: 'Claude',
+            offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+            author: { '@type': 'Person', name: mcp.creator_name },
+            keywords: `Claude, MCP, ${mcp.connected_service}, integration`,
+          }),
+        }}
+      />
+
       {/* ─── HERO ─── */}
       <section className="pt-28 pb-8 px-4 sm:px-6 lg:px-8 bg-[#1A1720]">
         <div className="container max-w-4xl mx-auto">

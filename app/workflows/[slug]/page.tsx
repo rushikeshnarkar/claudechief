@@ -52,6 +52,24 @@ export default async function WorkflowDetailPage({ params }: WorkflowPageProps) 
 
   return (
     <>
+      {/* JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'SoftwareApplication',
+            name: workflow.title,
+            description: workflow.description,
+            applicationCategory: 'BusinessApplication',
+            operatingSystem: 'Claude',
+            offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+            author: { '@type': 'Person', name: workflow.creator_name },
+            keywords: `Claude, workflow, ${workflow.department}, automation`,
+          }),
+        }}
+      />
+
       {/* ─── HERO ─── */}
       <section className="pt-28 pb-8 px-4 sm:px-6 lg:px-8 bg-[#1A1720]">
         <div className="container max-w-4xl mx-auto">

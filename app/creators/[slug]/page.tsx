@@ -60,6 +60,21 @@ export default async function CreatorDetailPage({ params }: CreatorPageProps) {
 
   return (
     <>
+      {/* JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Person',
+            name: creator.name,
+            description: creator.focus_area,
+            url: creator.profile_url,
+            sameAs: creator.profile_url ? [creator.profile_url] : [],
+          }),
+        }}
+      />
+
       {/* ─── PROFILE HEADER ─── */}
       <section className="pt-28 pb-10 px-4 sm:px-6 lg:px-8 bg-[#1A1720]">
         <div className="container max-w-4xl mx-auto">
@@ -81,10 +96,7 @@ export default async function CreatorDetailPage({ params }: CreatorPageProps) {
                 </span>
               </div>
               {creator.focus_area && (
-                <p className="text-[#A99E92] text-sm mb-3">{creator.focus_area}</p>
-              )}
-              {creator.focus_area && (
-                <p className="text-[#A99E92] leading-relaxed mb-5">{creator.focus_area}</p>
+                <p className="text-[#A99E92] text-sm leading-relaxed mb-5">{creator.focus_area}</p>
               )}
               <div className="flex items-center gap-6 text-sm flex-wrap">
                 <span className="text-[#6B6158]">{formatFollowerCount(creator.follower_count)} followers</span>

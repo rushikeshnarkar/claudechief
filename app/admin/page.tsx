@@ -1,31 +1,76 @@
 import Link from 'next/link';
-import { Bookmark, Zap, Cpu, Rocket, Users, ArrowRight, TrendingUp, Eye, Download, Plus } from 'lucide-react';
+import { Bookmark, Zap, Cpu, Users, ArrowRight, TrendingUp, Eye, Download, Plus } from 'lucide-react';
+import { createClient } from '@/lib/supabase/server';
 
-// Mock stats — replace with Supabase queries when connected
-const STATS = [
-  { label: 'Total Skills', value: '847', change: '+12 this week', icon: Bookmark, color: '#D97757', href: '/admin/skills' },
-  { label: 'Workflows', value: '234', change: '+5 this week', icon: Zap, color: '#6A9BCC', href: '/admin/workflows' },
-  { label: 'MCPs', value: '156', change: '+8 this week', icon: Cpu, color: '#4ADE80', href: '/admin/mcps' },
-  { label: 'Creators', value: '89', change: '+3 this week', icon: Users, color: '#C9862A', href: '/admin/creators' },
-];
+export default async function AdminDashboard() {
+  const supabase = await createClient();
 
-const RECENT_ACTIVITY = [
-  { type: 'skill', title: 'LinkedIn Content System', action: 'Added', time: '2 hours ago' },
-  { type: 'workflow', title: 'Lead Qualification Funnel', action: 'Updated', time: '5 hours ago' },
-  { type: 'mcp', title: 'Sequential Thinking MCP', action: 'Added', time: '1 day ago' },
-  { type: 'creator', title: 'Emily Watson', action: 'Added', time: '2 days ago' },
-  { type: 'update', title: 'Claude 3.7 Sonnet Released', action: 'Published', time: '3 days ago' },
-];
+  // Fetch real counts from all tables in parallel
+  const [skillsCount, workflowsCount, mcpsCount, creatorsCount] = await Promise.all([
+    supabase.from('skills').select('id', { count: 'exact', head: true }),
+    supabase.from('workflows').select('id', { count: 'exact', head: true }),
+    supabase.from('mcps').select('id', { count: 'exact', head: true }),
+    supabase.from('creators').select('id', { count: 'exact', head: true }),
+  ]);
 
-const TOP_PAGES = [
-  { title: 'LinkedIn Content System', views: '12,432', saves: '1,247' },
-  { title: 'Sequential Thinking MCP', views: '9,821', saves: '4,102' },
-  { title: 'Pitch Deck Generator', views: '7,654', saves: '1,891' },
-  { title: 'Cold Email Writer Pro', views: '6,234', saves: '892' },
-  { title: 'GitHub MCP', views: '5,891', saves: '2,847' },
-];
+  // Fetch top performing items (by save_count)
+  const { data: topSkills } = await supabase
+    .from('skills')
+    .select('title, save_count')
+    .order('save_count', { ascending: false })
+    .limit(5);
 
-export default function AdminDashboard() {
+  const { data: topWorkflows } = await supabase
+    .from('workflows')
+    .select('title, save_count')
+    .order('save_count', { ascending: false })
+    .limit(3);
+
+  const { data: topMcps } = await supabase
+    .from('mcps')
+    .select('title, save_count')
+    .order('save_count', { ascending: false })
+    .limit(2);
+
+  // Combine top performers
+  const topItems = [
+    ...(topSkills ?? []).map(s => ({ title: s.title, saves: s.save_count ?? 0, type: 'skill', href: `/skills` })),
+    ...(topWorkflows ?? []).map(w => ({ title: w.title, saves: w.save_count ?? 0, type: 'workflow', href: `/workflows` })),
+    ...(topMcps ?? []).map(m => ({ title: m.title, saves: m.save_count ?? 0, type: 'mcp', href: `/mcps` })),
+  ]
+    .sort((a, b) => b.saves - a.saves)
+    .slice(0, 5);
+
+  // Fetch recent items from each table
+  const [{ data: recentSkills }, { data: recentWorkflows }, { data: recentMcps }, { data: recentCreators }, { data: recentUpdates }] = await Promise.all([
+    supabase.from('skills').select('title, created_at').order('created_at', { ascending: false }).limit(3),
+    supabase.from('workflows').select('title, created_at').order('created_at', { ascending: false }).limit(2),
+    supabase.from('mcps').select('title, created_at').order('created_at', { ascending: false }).limit(2),
+    supabase.from('creators').select('name as title, created_at').order('created_at', { ascending: false }).limit(2),
+    supabase.from('updates').select('title, created_at').order('created_at', { ascending: false }).limit(2),
+  ]);
+
+  const recentActivity = [
+    ...(recentSkills ?? []).map((s: any) => ({ type: 'skill', title: s.title, action: 'Added', time: s.created_at })),
+    ...(recentWorkflows ?? []).map((w: any) => ({ type: 'workflow', title: w.title, action: 'Added', time: w.created_at })),
+    ...(recentMcps ?? []).map((m: any) => ({ type: 'mcp', title: m.title, action: 'Added', time: m.created_at })),
+    ...(recentCreators ?? []).map((c: any) => ({ type: 'creator', title: c.title, action: 'Added', time: c.created_at })),
+    ...(recentUpdates ?? []).map((u: any) => ({ type: 'update', title: u.title, action: 'Published', time: u.created_at })),
+  ]
+    .sort((a: any, b: any) => new Date(b.time).getTime() - new Date(a.time).getTime())
+    .slice(0, 5)
+    .map((item: any) => ({
+      ...item,
+      time: formatRelativeTime(item.time),
+    }));
+
+  const stats = [
+    { label: 'Skills', value: skillsCount.count ?? 0, icon: Bookmark, color: '#D97757', href: '/admin/skills' },
+    { label: 'Workflows', value: workflowsCount.count ?? 0, icon: Zap, color: '#6A9BCC', href: '/admin/workflows' },
+    { label: 'MCPs', value: mcpsCount.count ?? 0, icon: Cpu, color: '#4ADE80', href: '/admin/mcps' },
+    { label: 'Creators', value: creatorsCount.count ?? 0, icon: Users, color: '#C9862A', href: '/admin/creators' },
+  ];
+
   return (
     <div className="space-y-8">
       {/* Welcome */}
@@ -38,7 +83,7 @@ export default function AdminDashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {STATS.map((stat) => {
+        {stats.map((stat) => {
           const Icon = stat.icon;
           return (
             <div
@@ -53,9 +98,8 @@ export default function AdminDashboard() {
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
-              <div className="font-display text-2xl font-bold text-[#F5F0EB] mb-1">{stat.value}</div>
+              <div className="font-display text-2xl font-bold text-[#F5F0EB] mb-1">{stat.value.toLocaleString()}</div>
               <div className="text-sm text-[#A99E92]">{stat.label}</div>
-              <div className="text-xs text-[#6B6158] mt-1">{stat.change}</div>
             </div>
           );
         })}
@@ -68,7 +112,7 @@ export default function AdminDashboard() {
             <h3 className="font-display text-lg font-bold text-[#F5F0EB]">Recent activity</h3>
           </div>
           <div className="space-y-4">
-            {RECENT_ACTIVITY.map((item, i) => (
+            {recentActivity.map((item: any, i: number) => (
               <div key={i} className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3 min-w-0">
                   <span className={`px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded border flex-shrink-0 ${
@@ -97,15 +141,14 @@ export default function AdminDashboard() {
             <TrendingUp className="w-5 h-5 text-[#4ADE80]" />
           </div>
           <div className="space-y-4">
-            {TOP_PAGES.map((page, i) => (
+            {topItems.map((page: any, i: number) => (
               <div key={i} className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3 min-w-0">
                   <span className="text-[#6B6158] text-sm font-mono w-5 text-right flex-shrink-0">{i + 1}</span>
                   <span className="text-sm text-[#A99E92] truncate">{page.title}</span>
                 </div>
                 <div className="flex items-center gap-4 text-xs text-[#6B6158] flex-shrink-0">
-                  <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{page.views}</span>
-                  <span className="flex items-center gap-1"><Download className="w-3 h-3" />{page.saves}</span>
+                  <span className="flex items-center gap-1"><Download className="w-3 h-3" />{page.saves.toLocaleString()}</span>
                 </div>
               </div>
             ))}
@@ -139,4 +182,19 @@ export default function AdminDashboard() {
       </div>
     </div>
   );
+}
+
+function formatRelativeTime(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffMins < 1) return 'just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }

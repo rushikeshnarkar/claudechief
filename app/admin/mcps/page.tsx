@@ -14,11 +14,15 @@ interface MCP {
   setup_difficulty: string;
   save_count: number;
   creator_name: string;
+  description?: string;
+  install_link?: string;
+  department?: string;
+  tier?: string;
   created_at: string;
 }
 
 interface MCPFormData {
-  title: string; connected_service: string; setup_difficulty: string;
+  title: string; description: string; connected_service: string; setup_difficulty: string;
   install_link: string; department: string; tier: string; creator_name: string;
   use_cases: string;
 }
@@ -32,7 +36,7 @@ export default function AdminMCPsPage() {
   const [submitting, setSubmitting] = useState(false);
   const [saved, setSaved] = useState(false);
   const [form, setForm] = useState<MCPFormData>({
-    title: '', connected_service: '', setup_difficulty: 'easy',
+    title: '', description: '', connected_service: '', setup_difficulty: 'easy',
     install_link: '', department: 'research', tier: 'free', creator_name: '', use_cases: '',
   });
 
@@ -40,7 +44,7 @@ export default function AdminMCPsPage() {
     const supabase = createClient();
     const { data } = await supabase
       .from('mcps')
-      .select('id, title, connected_service, setup_difficulty, save_count, creator_name, created_at')
+      .select('id, title, connected_service, setup_difficulty, save_count, creator_name, description, install_link, department, tier, created_at')
       .order('created_at', { ascending: false });
     setMcps(data ?? []);
     setLoading(false);
@@ -56,15 +60,22 @@ export default function AdminMCPsPage() {
   const handleEdit = (mcp: MCP) => {
     setEditingId(mcp.id);
     setForm({
-      title: mcp.title, connected_service: mcp.connected_service, setup_difficulty: mcp.setup_difficulty,
-      install_link: '', department: 'research', tier: 'free', creator_name: mcp.creator_name, use_cases: '',
+      title: mcp.title,
+      description: (mcp as any).description ?? '',
+      connected_service: mcp.connected_service,
+      setup_difficulty: mcp.setup_difficulty,
+      install_link: (mcp as any).install_link ?? '',
+      department: (mcp as any).department ?? 'research',
+      tier: (mcp as any).tier ?? 'free',
+      creator_name: mcp.creator_name,
+      use_cases: Array.isArray((mcp as any).use_cases) ? (mcp as any).use_cases.join('\n') : '',
     });
     setShowForm(true);
   };
 
   const handleNew = () => {
     setEditingId(null);
-    setForm({ title: '', connected_service: '', setup_difficulty: 'easy',
+    setForm({ title: '', description: '', connected_service: '', setup_difficulty: 'easy',
       install_link: '', department: 'research', tier: 'free', creator_name: '', use_cases: '' });
     setShowForm(true);
   };
@@ -159,15 +170,19 @@ export default function AdminMCPsPage() {
             </div>
             <div className="flex-1 overflow-y-auto p-6 space-y-5">
               <div><label className="input-label">Title *</label><input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="input" placeholder="GitHub MCP" required /></div>
+              <div><label className="input-label">Description</label><textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} className="input resize-none" rows={2} placeholder="A brief description of what this MCP does..." /></div>
               <div className="grid grid-cols-2 gap-4">
                 <div><label className="input-label">Connected Service</label><input value={form.connected_service} onChange={e => setForm({ ...form, connected_service: e.target.value })} className="input" placeholder="GitHub" /></div>
-                <div><label className="input-label">Setup Difficulty</label><select value={form.setup_difficulty} onChange={e => setForm({ ...form, setup_difficulty: e.target.value })} className="input cursor-pointer">{DIFFICULTIES.map(d => <option key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</option>)}</select></div>
+                <div><label className="input-label">Tier</label><select value={form.tier} onChange={e => setForm({ ...form, tier: e.target.value })} className="input cursor-pointer"><option value="free">Free</option><option value="elite">Elite</option></select></div>
               </div>
               <div className="grid grid-cols-2 gap-4">
+                <div><label className="input-label">Setup Difficulty</label><select value={form.setup_difficulty} onChange={e => setForm({ ...form, setup_difficulty: e.target.value })} className="input cursor-pointer">{DIFFICULTIES.map(d => <option key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</option>)}</select></div>
                 <div><label className="input-label">Department</label><select value={form.department} onChange={e => setForm({ ...form, department: e.target.value })} className="input cursor-pointer">{DEPARTMENTS.map(d => <option key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</option>)}</select></div>
-                <div><label className="input-label">Creator Name</label><input value={form.creator_name} onChange={e => setForm({ ...form, creator_name: e.target.value })} className="input" placeholder="Anthropic" /></div>
               </div>
-              <div><label className="input-label">Install Link</label><input value={form.install_link} onChange={e => setForm({ ...form, install_link: e.target.value })} className="input" placeholder="https://github.com/..." /></div>
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="input-label">Creator Name</label><input value={form.creator_name} onChange={e => setForm({ ...form, creator_name: e.target.value })} className="input" placeholder="Anthropic" /></div>
+                <div><label className="input-label">Install Link</label><input value={form.install_link} onChange={e => setForm({ ...form, install_link: e.target.value })} className="input" placeholder="https://github.com/..." /></div>
+              </div>
               <div><label className="input-label">Use Cases (one per line)</label><textarea value={form.use_cases} onChange={e => setForm({ ...form, use_cases: e.target.value })} className="input resize-none font-mono text-sm" rows={4} placeholder="Review pull requests&#10;Manage issues&#10;Search codebases" /></div>
             </div>
             <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[rgba(54,46,40,0.4)]">

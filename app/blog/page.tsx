@@ -4,8 +4,6 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import { ArrowRight, Calendar, User, FileText } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 
 export const metadata: Metadata = {
   title: 'Claude Chief Blog — AI Insights & Resources',
@@ -54,45 +52,7 @@ export default function BlogPage() {
   const posts = getBlogPosts();
 
   return (
-    <>
-      {/* ─── NAVBAR ─── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 h-[72px] flex items-center px-6 lg:px-8 bg-[#0D0B0F]/[0.85] backdrop-blur-xl border-b border-[rgba(54,46,40,0.3)]">
-        <div className="container max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="relative w-10 h-10">
-              <div className="absolute inset-0 bg-[#D97757] rounded-[10px] overflow-hidden">
-                <div className="absolute top-[5px] right-[5px] w-3.5 h-3.5 bg-[#F5F0EB] rounded-full" />
-                <div className="absolute bottom-[5px] left-[6px] w-2.5 h-2.5 bg-[#F5F0EB] rounded-[3px] rotate-12" />
-              </div>
-            </div>
-            <span className="font-display text-xl font-bold text-[#F5F0EB] tracking-tight">
-              Claude Chief
-            </span>
-          </Link>
-
-          <div className="hidden md:flex items-center gap-1">
-            <Link href="/skills" className="px-4 py-2.5 text-sm font-medium text-[#A99E92] hover:text-[#F5F0EB] hover:bg-[#131118] rounded-lg transition-all">
-              Skills
-            </Link>
-            <Link href="/workflows" className="px-4 py-2.5 text-sm font-medium text-[#A99E92] hover:text-[#F5F0EB] hover:bg-[#131118] rounded-lg transition-all">
-              Workflows
-            </Link>
-            <Link href="/mcps" className="px-4 py-2.5 text-sm font-medium text-[#A99E92] hover:text-[#F5F0EB] hover:bg-[#131118] rounded-lg transition-all">
-              MCPs
-            </Link>
-            <Link href="/blog" className="px-4 py-2.5 text-sm font-semibold text-[#F5F0EB] bg-[#D97757] rounded-lg">
-              Blog
-            </Link>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Link href="/sign-in" className="btn btn-primary text-sm h-11 px-5">
-              Sign In
-            </Link>
-          </div>
-        </div>
-      </nav>
-
+    <div className="min-h-screen bg-[#0D0B0F]">
       {/* ─── HERO HEADER ─── */}
       <section className="pt-32 pb-10 px-4 sm:px-6 lg:px-8 bg-[#1A1720]">
         <div className="container max-w-4xl mx-auto">
@@ -112,7 +72,7 @@ export default function BlogPage() {
       </section>
 
       {/* ─── BLOG POSTS ─── */}
-      <section className="bg-[#0D0B0F] px-4 sm:px-6 lg:px-8 py-12">
+      <section className="px-4 sm:px-6 lg:px-8 py-12">
         <div className="container max-w-4xl mx-auto">
           {posts.length === 0 ? (
             <div className="text-center py-16">
@@ -176,27 +136,6 @@ export default function BlogPage() {
           )}
         </div>
       </section>
-
-      {/* ─── FOOTER ─── */}
-      <footer className="bg-[#1A1720] border-t border-[rgba(54,46,40,0.3)] px-6 sm:px-8 py-12">
-        <div className="container max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-[#D97757] rounded-lg relative overflow-hidden">
-              <div className="absolute top-[4px] right-[4px] w-2 h-2 bg-[#F5F0EB] rounded-full" />
-              <div className="absolute bottom-[4px] left-[4px] w-1.5 h-1.5 bg-[#F5F0EB] rounded-[2px] rotate-12" />
-            </div>
-            <span className="text-[#6B6158] text-sm">
-              Claude Chief · Not affiliated with Anthropic
-            </span>
-          </div>
-
-          <div className="flex items-center gap-6 text-sm text-[#6B6158]">
-            <Link href="/skills" className="hover:text-[#A99E92] transition-colors">Skills</Link>
-            <Link href="/blog" className="hover:text-[#A99E92] transition-colors">Blog</Link>
-            <Link href="/sign-in" className="hover:text-[#A99E92] transition-colors">Sign In</Link>
-          </div>
-        </div>
-      </footer>
-    </>
+    </div>
   );
 }
