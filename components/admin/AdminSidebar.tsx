@@ -11,6 +11,7 @@ import {
   Cpu,
   Rocket,
   Users,
+  FileText,
   LogOut,
   ChevronLeft,
   Menu,
@@ -25,6 +26,7 @@ const ADMIN_NAV = [
   { href: '/admin/mcps', label: 'MCPs', icon: Cpu },
   { href: '/admin/updates', label: 'Updates', icon: Rocket },
   { href: '/admin/creators', label: 'Creators', icon: Users },
+  { href: '/admin/uploads', label: 'Uploads', icon: FileText },
 ];
 
 export default function AdminSidebar() {
