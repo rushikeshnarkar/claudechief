@@ -5,6 +5,7 @@ import { ArrowLeft, Clock, Wrench, Bookmark, ExternalLink, User, ArrowRight } fr
 import { createClient } from '@/lib/supabase/server';
 import { formatNumber } from '@/lib/utils';
 import { SITE_URL } from '@/lib/constants';
+import { WorkflowActions } from './WorkflowActions';
 
 const DIFFICULTY_LABELS: Record<string, string> = {
   easy: 'Beginner',
@@ -158,40 +159,7 @@ export default async function WorkflowDetailPage({ params }: WorkflowPageProps) 
 
             {/* Sidebar */}
             <div className="space-y-5">
-              <div className="p-6 bg-[rgba(19,17,24,0.88)] border border-[rgba(54,46,40,0.5)] rounded-[22px]">
-                <h3 className="font-body font-semibold text-[#F5F0EB] text-sm mb-4">Get this workflow</h3>
-                {workflow.source_url ? (
-                  <a href={workflow.source_url} target="_blank" rel="noopener noreferrer" className="btn btn-primary w-full justify-center">
-                    View Source <ExternalLink className="w-4 h-4" />
-                  </a>
-                ) : (
-                  <button className="btn btn-primary w-full justify-center opacity-50 cursor-not-allowed">
-                    No source available
-                  </button>
-                )}
-                <button className="btn btn-ghost w-full justify-center mt-3">
-                  <Bookmark className="w-4 h-4" /> Save for later
-                </button>
-              </div>
-
-              <div className="p-6 bg-[rgba(19,17,24,0.88)] border border-[rgba(54,46,40,0.5)] rounded-[22px]">
-                <h3 className="font-body font-semibold text-[#F5F0EB] text-sm mb-4">Creator</h3>
-                {workflow.creator_link ? (
-                  <a href={workflow.creator_link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-[#A99E92] hover:text-[#D97757] transition-colors">
-                    <div className="w-10 h-10 bg-[#131118] rounded-full flex items-center justify-center">
-                      <User className="w-5 h-5 text-[#6B6158]" />
-                    </div>
-                    <span className="font-medium">{workflow.creator_name}</span>
-                  </a>
-                ) : (
-                  <div className="flex items-center gap-3 text-[#A99E92]">
-                    <div className="w-10 h-10 bg-[#131118] rounded-full flex items-center justify-center">
-                      <User className="w-5 h-5 text-[#6B6158]" />
-                    </div>
-                    <span className="font-medium">{workflow.creator_name}</span>
-                  </div>
-                )}
-              </div>
+              <WorkflowActions workflow={workflow} />
             </div>
           </div>
         </div>
