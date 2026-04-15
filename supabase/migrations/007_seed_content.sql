@@ -148,7 +148,7 @@ on conflict (slug) do nothing;
 
 -- ─── WORKFLOWS (6 total) ──────────────────────────────────────────────────────
 
-insert into public.workflows (title, slug, description, steps, tools, time_estimate, difficulty, department, tier, creator_name, creator_link, source_url) values
+insert into public.workflows (title, slug, description, steps, tools, time_estimate, difficulty, department, tier, creator_name, source_url) values
 -- UPDATED from migration 001
 (
   'Automated Content Pipeline',
@@ -161,7 +161,6 @@ insert into public.workflows (title, slug, description, steps, tools, time_estim
   'content',
   'free',
   'Sarah Mitchell',
-  'https://twitter.com/sarahmitchell',
   'https://github.com/sarahmitchell/content-pipeline'
 ),
 (
@@ -175,17 +174,16 @@ insert into public.workflows (title, slug, description, steps, tools, time_estim
   'sales',
   'free',
   'David Kim',
-  'https://twitter.com/davidkim',
   'https://github.com/davidkim/lead-funnel'
 )
 on conflict (slug) do update set
   title=excluded.title, description=excluded.description, steps=excluded.steps,
   tools=excluded.tools, time_estimate=excluded.time_estimate, difficulty=excluded.difficulty,
   department=excluded.department, tier=excluded.tier, creator_name=excluded.creator_name,
-  creator_link=excluded.creator_link, source_url=excluded.source_url;
+  source_url=excluded.source_url;
 
 -- NEW WORKFLOWS
-insert into public.workflows (title, slug, description, steps, tools, time_estimate, difficulty, department, tier, creator_name, creator_link, source_url) values
+insert into public.workflows (title, slug, description, steps, tools, time_estimate, difficulty, department, tier, creator_name, source_url) values
 (
   'Customer Onboarding Flow',
   'customer-onboarding-flow',
@@ -197,7 +195,6 @@ insert into public.workflows (title, slug, description, steps, tools, time_estim
   'operations',
   'free',
   'Jordan Lee',
-  'https://twitter.com/jordanlee',
   'https://github.com/jordanlee/onboarding-flow'
 ),
 (
@@ -211,7 +208,6 @@ insert into public.workflows (title, slug, description, steps, tools, time_estim
   'research',
   'free',
   'Priya Patel',
-  'https://twitter.com/priyapatel',
   'https://github.com/priyapatel/market-research'
 ),
 (
@@ -225,7 +221,6 @@ insert into public.workflows (title, slug, description, steps, tools, time_estim
   'marketing',
   'free',
   'Alex Chen',
-  'https://twitter.com/alexchen',
   'https://github.com/alexchen/seo-pipeline'
 ),
 (
@@ -239,14 +234,13 @@ insert into public.workflows (title, slug, description, steps, tools, time_estim
   'sales',
   'elite',
   'David Kim',
-  'https://twitter.com/davidkim',
   'https://github.com/davidkim/sales-playbook'
 )
 on conflict (slug) do nothing;
 
 -- ─── MCPS (5 total) ──────────────────────────────────────────────────────────
 
-insert into public.mcps (title, slug, connected_service, setup_difficulty, use_cases, install_link, department, tier, creator_name, creator_link, description) values
+insert into public.mcps (title, slug, connected_service, setup_difficulty, use_cases, install_link, department, tier, creator_name, description) values
 -- UPDATED from migration 001
 (
   'Filesystem MCP',
@@ -258,7 +252,6 @@ insert into public.mcps (title, slug, connected_service, setup_difficulty, use_c
   'research',
   'free',
   'Marcus Rodriguez',
-  'https://github.com/marcusrodriguez',
   'Connect Claude to your local filesystem. Read, write, search, and organize files directly from conversations. Perfect for developers who want Claude to work alongside their codebase.'
 ),
 (
@@ -271,7 +264,6 @@ insert into public.mcps (title, slug, connected_service, setup_difficulty, use_c
   'research',
   'free',
   'Anthropic',
-  'https://anthropic.com',
   'Connect Claude directly to GitHub. Review code, manage issues, search repositories, and automate development workflows without leaving your conversation.'
 ),
 (
@@ -284,18 +276,17 @@ insert into public.mcps (title, slug, connected_service, setup_difficulty, use_c
   'research',
   'free',
   'Anthropic',
-  'https://anthropic.com',
   'Structured thinking tool that helps Claude break down complex problems into sequential steps. Ideal for research, planning, and analysis-heavy workflows.'
 )
 on conflict (slug) do update set
   title=excluded.title, connected_service=excluded.connected_service,
   setup_difficulty=excluded.setup_difficulty, use_cases=excluded.use_cases,
   install_link=excluded.install_link, department=excluded.department,
-  creator_name=excluded.creator_name, creator_link=excluded.creator_link,
+  creator_name=excluded.creator_name,
   description=excluded.description;
 
 -- NEW MCPS
-insert into public.mcps (title, slug, connected_service, setup_difficulty, use_cases, install_link, department, tier, creator_name, creator_link, description) values
+insert into public.mcps (title, slug, connected_service, setup_difficulty, use_cases, install_link, department, tier, creator_name, description) values
 (
   'Slack MCP',
   'slack',
@@ -306,7 +297,6 @@ insert into public.mcps (title, slug, connected_service, setup_difficulty, use_c
   'operations',
   'free',
   'Marcus Rodriguez',
-  'https://github.com/marcusrodriguez',
   'Connect Claude to Slack for team communication automation. Send updates, search history, create channels, and keep your team in sync directly from Claude conversations.'
 ),
 (
@@ -319,7 +309,6 @@ insert into public.mcps (title, slug, connected_service, setup_difficulty, use_c
   'research',
   'free',
   'Anthropic',
-  'https://anthropic.com',
   'Give Claude the ability to browse the web. Take screenshots, extract content, fill forms, and navigate websites. Perfect for research, competitive analysis, and automated web tasks.'
 )
 on conflict (slug) do nothing;
