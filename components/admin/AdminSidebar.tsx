@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
+  LayoutGrid,
   Bookmark,
   Zap,
   Cpu,
@@ -18,6 +19,7 @@ import { createClient } from '@/lib/supabase/client';
 
 const ADMIN_NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/blocks', label: 'Blocks', icon: LayoutGrid },
   { href: '/admin/skills', label: 'Skills', icon: Bookmark },
   { href: '/admin/workflows', label: 'Workflows', icon: Zap },
   { href: '/admin/mcps', label: 'MCPs', icon: Cpu },
