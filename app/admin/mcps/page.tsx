@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Plus, Pencil, Trash2, Search, X, Check, Loader2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, X, Check, Loader2, Upload, FileText } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
 const DEPARTMENTS = ['marketing', 'sales', 'design', 'content', 'founders', 'operations', 'finance', 'research'];
@@ -10,6 +10,7 @@ const DIFFICULTIES = ['easy', 'medium', 'advanced'];
 interface MCP {
   id: string;
   title: string;
+  slug: string;
   connected_service: string;
   setup_difficulty: string;
   save_count: number;
@@ -18,13 +19,14 @@ interface MCP {
   install_link?: string;
   department?: string;
   tier?: string;
+  asset_file?: string;
   created_at: string;
 }
 
 interface MCPFormData {
-  title: string; description: string; connected_service: string; setup_difficulty: string;
+  title: string; slug: string; description: string; connected_service: string; setup_difficulty: string;
   install_link: string; department: string; tier: string; creator_name: string;
-  use_cases: string;
+  use_cases: string; asset_file: string;
 }
 
 export default function AdminMCPsPage() {
@@ -36,15 +38,15 @@ export default function AdminMCPsPage() {
   const [submitting, setSubmitting] = useState(false);
   const [saved, setSaved] = useState(false);
   const [form, setForm] = useState<MCPFormData>({
-    title: '', description: '', connected_service: '', setup_difficulty: 'easy',
-    install_link: '', department: 'research', tier: 'free', creator_name: '', use_cases: '',
+    title: '', slug: '', description: '', connected_service: '', setup_difficulty: 'easy',
+    install_link: '', department: 'research', tier: 'free', creator_name: '', use_cases: '', asset_file: '',
   });
 
   const fetchMCPs = useCallback(async () => {
     const supabase = createClient();
     const { data } = await supabase
       .from('mcps')
-      .select('id, title, connected_service, setup_difficulty, save_count, creator_name, description, install_link, department, tier, created_at')
+      .select('id, title, slug, connected_service, setup_difficulty, save_count, creator_name, description, install_link, department, tier, asset_file, created_at')
       .order('created_at', { ascending: false });
     setMcps(data ?? []);
     setLoading(false);
@@ -57,10 +59,28 @@ export default function AdminMCPsPage() {
     m.connected_service.toLowerCase().includes(search.toLowerCase())
   );
 
+  const generateSlug = (title: string) =>
+    title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').slice(0, 80);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'skills' | 'workflows' | 'mcps') => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const supabase = createClient();
+    const path = `${type}/${Date.now()}-${file.name.replace(/[^a-z0-9.-]/gi, '-')}`;
+    setSubmitting(true);
+    try {
+      const { error } = await supabase.storage.from('assets').upload(path, file, { upsert: true });
+      if (error) { alert(`Upload failed: ${error.message}`); return; }
+      setForm(f => ({ ...f, asset_file: path }));
+    } catch { alert('Upload error. Please try again.'); }
+    finally { setSubmitting(false); }
+  };
+
   const handleEdit = (mcp: MCP) => {
     setEditingId(mcp.id);
     setForm({
       title: mcp.title,
+      slug: (mcp as any).slug ?? generateSlug(mcp.title),
       description: (mcp as any).description ?? '',
       connected_service: mcp.connected_service,
       setup_difficulty: mcp.setup_difficulty,
@@ -69,14 +89,15 @@ export default function AdminMCPsPage() {
       tier: (mcp as any).tier ?? 'free',
       creator_name: mcp.creator_name,
       use_cases: Array.isArray((mcp as any).use_cases) ? (mcp as any).use_cases.join('\n') : '',
+      asset_file: (mcp as any).asset_file ?? '',
     });
     setShowForm(true);
   };
 
   const handleNew = () => {
     setEditingId(null);
-    setForm({ title: '', description: '', connected_service: '', setup_difficulty: 'easy',
-      install_link: '', department: 'research', tier: 'free', creator_name: '', use_cases: '' });
+    setForm({ title: '', slug: '', description: '', connected_service: '', setup_difficulty: 'easy',
+      install_link: '', department: 'research', tier: 'free', creator_name: '', use_cases: '', asset_file: '' });
     setShowForm(true);
   };
 
@@ -184,6 +205,27 @@ export default function AdminMCPsPage() {
                 <div><label className="input-label">Install Link</label><input value={form.install_link} onChange={e => setForm({ ...form, install_link: e.target.value })} className="input" placeholder="https://github.com/..." /></div>
               </div>
               <div><label className="input-label">Use Cases (one per line)</label><textarea value={form.use_cases} onChange={e => setForm({ ...form, use_cases: e.target.value })} className="input resize-none font-mono text-sm" rows={4} placeholder="Review pull requests&#10;Manage issues&#10;Search codebases" /></div>
+
+              {/* File Upload */}
+              <div>
+                <label className="input-label">Downloadable File</label>
+                {form.asset_file ? (
+                  <div className="flex items-center justify-between p-4 bg-[rgba(74,222,128,0.06)] border border-[rgba(74,222,128,0.2)] rounded-xl">
+                    <div className="flex items-center gap-3 text-sm text-[#A99E92]">
+                      <FileText className="w-5 h-5 text-[#4ADE80]" />
+                      <span className="font-mono truncate max-w-xs">{form.asset_file}</span>
+                    </div>
+                    <button type="button" onClick={() => setForm({ ...form, asset_file: '' })} className="text-xs text-[#6B6158] hover:text-[#EF4444] transition-colors ml-2 shrink-0">Remove</button>
+                  </div>
+                ) : (
+                  <label className="flex flex-col items-center gap-2 py-6 border-2 border-dashed border-[rgba(54,46,40,0.5)] rounded-xl cursor-pointer hover:border-[#D97757]/50 transition-colors">
+                    <Upload className="w-6 h-6 text-[#6B6158]" />
+                    <span className="text-sm text-[#6B6158]">Click to upload or drag & drop</span>
+                    <span className="text-xs text-[#6B6158]/60">ZIP, PDF, or MD (max 10MB)</span>
+                    <input type="file" accept=".zip,.pdf,.md,.txt" className="hidden" onChange={e => handleFileUpload(e, 'mcps')} />
+                  </label>
+                )}
+              </div>
             </div>
             <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[rgba(54,46,40,0.4)]">
               <button onClick={() => setShowForm(false)} className="btn btn-outline text-sm h-10 px-4">Cancel</button>

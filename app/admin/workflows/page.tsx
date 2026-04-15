@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Plus, Pencil, Trash2, Search, X, Check, Loader2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, X, Check, Loader2, Upload, FileText } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
 const DEPARTMENTS = ['marketing', 'sales', 'design', 'content', 'founders', 'operations', 'finance', 'research'];
@@ -10,6 +10,7 @@ const DIFFICULTIES = ['easy', 'medium', 'advanced'];
 interface Workflow {
   id: string;
   title: string;
+  slug: string;
   department: string;
   difficulty: string;
   save_count: number;
@@ -19,13 +20,14 @@ interface Workflow {
   tier?: string;
   time_estimate?: string;
   source_url?: string;
+  asset_file?: string;
   created_at: string;
 }
 
 interface WorkflowFormData {
-  title: string; description: string; department: string; difficulty: string;
+  title: string; slug: string; description: string; department: string; difficulty: string;
   time_estimate: string; creator_name: string; creator_link: string; source_url: string;
-  steps: string; tools: string; tier: string;
+  steps: string; tools: string; tier: string; asset_file: string;
 }
 
 export default function AdminWorkflowsPage() {
@@ -37,16 +39,16 @@ export default function AdminWorkflowsPage() {
   const [submitting, setSubmitting] = useState(false);
   const [saved, setSaved] = useState(false);
   const [form, setForm] = useState<WorkflowFormData>({
-    title: '', description: '', department: 'content', difficulty: 'medium',
+    title: '', slug: '', description: '', department: 'content', difficulty: 'medium',
     time_estimate: '', creator_name: '', creator_link: '', source_url: '',
-    steps: '', tools: '', tier: 'free',
+    steps: '', tools: '', tier: 'free', asset_file: '',
   });
 
   const fetchWorkflows = useCallback(async () => {
     const supabase = createClient();
     const { data } = await supabase
       .from('workflows')
-      .select('id, title, department, difficulty, save_count, creator_name, description, creator_link, tier, time_estimate, source_url, created_at')
+      .select('id, title, slug, department, difficulty, save_count, creator_name, description, creator_link, tier, time_estimate, source_url, asset_file, created_at')
       .order('created_at', { ascending: false });
     setWorkflows(data ?? []);
     setLoading(false);
@@ -59,10 +61,28 @@ export default function AdminWorkflowsPage() {
     w.department.toLowerCase().includes(search.toLowerCase())
   );
 
+  const generateSlug = (title: string) =>
+    title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').slice(0, 80);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'skills' | 'workflows' | 'mcps') => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const supabase = createClient();
+    const path = `${type}/${Date.now()}-${file.name.replace(/[^a-z0-9.-]/gi, '-')}`;
+    setSubmitting(true);
+    try {
+      const { error } = await supabase.storage.from('assets').upload(path, file, { upsert: true });
+      if (error) { alert(`Upload failed: ${error.message}`); return; }
+      setForm(f => ({ ...f, asset_file: path }));
+    } catch { alert('Upload error. Please try again.'); }
+    finally { setSubmitting(false); }
+  };
+
   const handleEdit = (wf: Workflow) => {
     setEditingId(wf.id);
     setForm({
       title: wf.title,
+      slug: (wf as any).slug ?? generateSlug(wf.title),
       description: (wf as any).description ?? '',
       department: wf.department,
       difficulty: wf.difficulty,
@@ -73,15 +93,16 @@ export default function AdminWorkflowsPage() {
       tier: (wf as any).tier ?? 'free',
       steps: Array.isArray((wf as any).steps) ? (wf as any).steps.join('\n') : '',
       tools: Array.isArray((wf as any).tools) ? (wf as any).tools.join(', ') : '',
+      asset_file: (wf as any).asset_file ?? '',
     });
     setShowForm(true);
   };
 
   const handleNew = () => {
     setEditingId(null);
-    setForm({ title: '', description: '', department: 'content', difficulty: 'medium',
+    setForm({ title: '', slug: '', description: '', department: 'content', difficulty: 'medium',
       time_estimate: '', creator_name: '', creator_link: '', source_url: '',
-      steps: '', tools: '', tier: 'free' });
+      steps: '', tools: '', tier: 'free', asset_file: '' });
     setShowForm(true);
   };
 
@@ -192,6 +213,27 @@ export default function AdminWorkflowsPage() {
               <div><label className="input-label">Source URL</label><input value={form.source_url} onChange={e => setForm({ ...form, source_url: e.target.value })} className="input" placeholder="https://github.com/..." /></div>
               <div><label className="input-label">Steps (one per line)</label><textarea value={form.steps} onChange={e => setForm({ ...form, steps: e.target.value })} className="input resize-none font-mono text-sm" rows={4} placeholder="Step 1&#10;Step 2&#10;Step 3" /></div>
               <div><label className="input-label">Tools (comma-separated)</label><input value={form.tools} onChange={e => setForm({ ...form, tools: e.target.value })} className="input" placeholder="Claude, Notion, Buffer" /></div>
+
+              {/* File Upload */}
+              <div>
+                <label className="input-label">Downloadable File</label>
+                {form.asset_file ? (
+                  <div className="flex items-center justify-between p-4 bg-[rgba(74,222,128,0.06)] border border-[rgba(74,222,128,0.2)] rounded-xl">
+                    <div className="flex items-center gap-3 text-sm text-[#A99E92]">
+                      <FileText className="w-5 h-5 text-[#4ADE80]" />
+                      <span className="font-mono truncate max-w-xs">{form.asset_file}</span>
+                    </div>
+                    <button type="button" onClick={() => setForm({ ...form, asset_file: '' })} className="text-xs text-[#6B6158] hover:text-[#EF4444] transition-colors ml-2 shrink-0">Remove</button>
+                  </div>
+                ) : (
+                  <label className="flex flex-col items-center gap-2 py-6 border-2 border-dashed border-[rgba(54,46,40,0.5)] rounded-xl cursor-pointer hover:border-[#D97757]/50 transition-colors">
+                    <Upload className="w-6 h-6 text-[#6B6158]" />
+                    <span className="text-sm text-[#6B6158]">Click to upload or drag & drop</span>
+                    <span className="text-xs text-[#6B6158]/60">ZIP, PDF, or MD (max 10MB)</span>
+                    <input type="file" accept=".zip,.pdf,.md,.txt" className="hidden" onChange={e => handleFileUpload(e, 'workflows')} />
+                  </label>
+                )}
+              </div>
             </div>
             <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[rgba(54,46,40,0.4)]">
               <button onClick={() => setShowForm(false)} className="btn btn-outline text-sm h-10 px-4">Cancel</button>

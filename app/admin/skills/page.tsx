@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { Plus, Pencil, Trash2, Search, X, Check, ExternalLink, Loader2 } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { Plus, Pencil, Trash2, Search, X, Check, ExternalLink, Loader2, Upload, FileText, Download } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
 const DEPARTMENTS = ['marketing', 'sales', 'design', 'content', 'founders', 'operations', 'finance', 'research'];
@@ -11,6 +11,7 @@ const SOURCES = ['github', 'youtube', 'blog', 'twitter', 'website'];
 interface Skill {
   id: string;
   title: string;
+  slug: string;
   department: string;
   tier: string;
   save_count: number;
@@ -20,13 +21,14 @@ interface Skill {
   source_url?: string;
   creator_link?: string;
   prompt_preview?: string;
+  asset_file?: string;
   created_at: string;
 }
 
 interface SkillFormData {
-  title: string; description: string; department: string; tier: string;
+  title: string; slug: string; description: string; department: string; tier: string;
   source_type: string; source_url: string; creator_name: string; creator_link: string;
-  prompt_preview: string;
+  prompt_preview: string; asset_file: string;
 }
 
 export default function AdminSkillsPage() {
@@ -38,15 +40,15 @@ export default function AdminSkillsPage() {
   const [submitting, setSubmitting] = useState(false);
   const [saved, setSaved] = useState(false);
   const [form, setForm] = useState<SkillFormData>({
-    title: '', description: '', department: 'marketing', tier: 'free',
-    source_type: 'github', source_url: '', creator_name: '', creator_link: '', prompt_preview: '',
+    title: '', slug: '', description: '', department: 'marketing', tier: 'free',
+    source_type: 'github', source_url: '', creator_name: '', creator_link: '', prompt_preview: '', asset_file: '',
   });
 
   const fetchSkills = useCallback(async () => {
     const supabase = createClient();
     const { data } = await supabase
       .from('skills')
-      .select('id, title, department, tier, save_count, source_type, creator_name, description, source_url, creator_link, prompt_preview, created_at')
+      .select('id, title, slug, department, tier, save_count, source_type, creator_name, description, source_url, creator_link, prompt_preview, asset_file, created_at')
       .order('created_at', { ascending: false });
     setSkills(data ?? []);
     setLoading(false);
@@ -59,10 +61,41 @@ export default function AdminSkillsPage() {
     s.department.toLowerCase().includes(search.toLowerCase())
   );
 
+  const generateSlug = (title: string) =>
+    title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').slice(0, 80);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'skills' | 'workflows' | 'mcps') => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const supabase = createClient();
+    const ext = file.name.split('.').pop();
+    const timestamp = Date.now();
+    const path = `${type}/${timestamp}-${file.name.replace(/[^a-z0-9.-]/gi, '-')}`;
+
+    setSubmitting(true);
+    try {
+      const { error: uploadError } = await supabase.storage
+        .from('assets')
+        .upload(path, file, { upsert: true });
+
+      if (uploadError) {
+        alert(`Upload failed: ${uploadError.message}`);
+        return;
+      }
+      setForm(f => ({ ...f, asset_file: path }));
+    } catch {
+      alert('An error occurred during upload. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const handleEdit = (skill: Skill) => {
     setEditingId(skill.id);
     setForm({
       title: skill.title,
+      slug: (skill as any).slug ?? generateSlug(skill.title),
       description: (skill as any).description ?? '',
       department: skill.department,
       tier: skill.tier,
@@ -71,14 +104,15 @@ export default function AdminSkillsPage() {
       creator_name: skill.creator_name,
       creator_link: (skill as any).creator_link ?? '',
       prompt_preview: (skill as any).prompt_preview ?? '',
+      asset_file: (skill as any).asset_file ?? '',
     });
     setShowForm(true);
   };
 
   const handleNew = () => {
     setEditingId(null);
-    setForm({ title: '', description: '', department: 'marketing', tier: 'free',
-      source_type: 'github', source_url: '', creator_name: '', creator_link: '', prompt_preview: '' });
+    setForm({ title: '', slug: '', description: '', department: 'marketing', tier: 'free',
+      source_type: 'github', source_url: '', creator_name: '', creator_link: '', prompt_preview: '', asset_file: '' });
     setShowForm(true);
   };
 
@@ -210,7 +244,14 @@ export default function AdminSkillsPage() {
             <div className="flex-1 overflow-y-auto p-6 space-y-5">
               <div>
                 <label className="input-label">Title *</label>
-                <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="input" placeholder="LinkedIn Content System" required />
+                <input value={form.title} onChange={e => { setForm({ ...form, title: e.target.value }); if (!editingId) setForm(f => ({ ...f, slug: generateSlug(e.target.value) })); }} className="input" placeholder="LinkedIn Content System" required />
+              </div>
+              <div>
+                <label className="input-label">Slug * <span className="text-[#6B6158] font-normal normal-case">(auto-generated from title)</span></label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B6158] text-sm">claudechief.com/skills/</span>
+                  <input value={form.slug} onChange={e => setForm({ ...form, slug: e.target.value })} className="input pl-[190px]" placeholder="linkedin-content-system" />
+                </div>
               </div>
               <div>
                 <label className="input-label">Description *</label>
@@ -255,6 +296,38 @@ export default function AdminSkillsPage() {
               <div>
                 <label className="input-label">Prompt Preview</label>
                 <textarea value={form.prompt_preview} onChange={e => setForm({ ...form, prompt_preview: e.target.value })} className="input resize-none font-mono text-sm" rows={4} placeholder="Create a LinkedIn post about [TOPIC] that follows..." />
+              </div>
+
+              {/* File Upload */}
+              <div>
+                <label className="input-label">Downloadable File</label>
+                {form.asset_file ? (
+                  <div className="flex items-center justify-between p-4 bg-[rgba(74,222,128,0.06)] border border-[rgba(74,222,128,0.2)] rounded-xl">
+                    <div className="flex items-center gap-3 text-sm text-[#A99E92]">
+                      <FileText className="w-5 h-5 text-[#4ADE80]" />
+                      <span className="font-mono truncate max-w-xs">{form.asset_file}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setForm({ ...form, asset_file: '' })}
+                      className="text-xs text-[#6B6158] hover:text-[#EF4444] transition-colors ml-2 shrink-0"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex flex-col items-center gap-2 py-6 border-2 border-dashed border-[rgba(54,46,40,0.5)] rounded-xl cursor-pointer hover:border-[#D97757]/50 transition-colors">
+                    <Upload className="w-6 h-6 text-[#6B6158]" />
+                    <span className="text-sm text-[#6B6158]">Click to upload or drag & drop</span>
+                    <span className="text-xs text-[#6B6158]/60">ZIP, PDF, or MD (max 10MB)</span>
+                    <input
+                      type="file"
+                      accept=".zip,.pdf,.md,.txt"
+                      className="hidden"
+                      onChange={e => handleFileUpload(e, 'skills')}
+                    />
+                  </label>
+                )}
               </div>
             </div>
 

@@ -5,6 +5,7 @@ import { ArrowLeft, ExternalLink, Bookmark, User, Calendar, Share2, Star } from 
 import { createClient } from '@/lib/supabase/server';
 import { formatNumber } from '@/lib/utils';
 import { SITE_URL } from '@/lib/constants';
+import DownloadButton from '@/components/DownloadButton';
 
 interface SkillDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -15,7 +16,7 @@ export async function generateMetadata({ params }: SkillDetailPageProps): Promis
   const supabase = await createClient();
   const { data: skill } = await supabase
     .from('skills')
-    .select('title, description, department, tier, creator_name, creator_link')
+    .select('title, description, department, tier, creator_name, creator_link, asset_file')
     .eq('slug', slug)
     .single();
 
@@ -41,7 +42,7 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
   const supabase = await createClient();
   const { data: skill } = await supabase
     .from('skills')
-    .select('*')
+    .select('*, asset_file')
     .eq('slug', slug)
     .single();
 
@@ -168,16 +169,18 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
                       href={skill.source_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="btn btn-primary w-full justify-center"
+                      className="btn btn-outline w-full justify-center"
                     >
                       View on {sourceLabel}
                       <ExternalLink className="w-4 h-4" />
                     </a>
-                  ) : (
-                    <button className="btn btn-primary w-full justify-center opacity-50 cursor-not-allowed">
-                      No source available
-                    </button>
-                  )}
+                  ) : null}
+                  <DownloadButton
+                    resourceId={skill.id}
+                    resourceTitle={skill.title}
+                    resourceType="skills"
+                    hasFile={!!skill.asset_file}
+                  />
                   <button className="btn btn-ghost w-full justify-center">
                     <Bookmark className="w-4 h-4" />
                     Save for later
