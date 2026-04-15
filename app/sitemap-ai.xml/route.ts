@@ -1,4 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
 import { DEPARTMENTS, SITE_URL } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
@@ -15,6 +18,22 @@ function escapeXml(str: string): string {
 export async function GET() {
   const baseUrl = SITE_URL;
   const supabase = await createClient();
+
+  // Blog posts from markdown files
+  let blogPosts: Array<{ slug: string; date: string }> = [];
+  try {
+    const postsDir = path.join(process.cwd(), 'content/blog');
+    const files = fs.readdirSync(postsDir);
+    blogPosts = files
+      .filter((f) => f.endsWith('.md'))
+      .map((filename) => {
+        const slug = filename.replace(/\.md$/, '');
+        const { data } = matter(fs.readFileSync(path.join(postsDir, filename), 'utf8'));
+        return { slug, date: (data.date as string) ?? new Date().toISOString() };
+      });
+  } catch {
+    // no blog posts yet
+  }
 
   const [skillsRes, workflowsRes, mcpsRes, updatesRes, creatorsRes] = await Promise.all([
     supabase.from('skills').select('slug, title, department, description, created_at'),
@@ -37,6 +56,11 @@ export async function GET() {
     { loc: `${baseUrl}/mcps`, lastmod: new Date().toISOString(), priority: 0.95 },
     { loc: `${baseUrl}/creators`, lastmod: new Date().toISOString(), priority: 0.9 },
     { loc: `${baseUrl}/blog`, lastmod: new Date().toISOString(), priority: 0.9 },
+    ...blogPosts.map((p) => ({
+      loc: `${baseUrl}/blog/${p.slug}`,
+      lastmod: new Date(p.date).toISOString(),
+      priority: 0.9,
+    })),
     ...DEPARTMENTS.map((d) => ({
       loc: `${baseUrl}/${d.slug}`,
       lastmod: new Date().toISOString(),

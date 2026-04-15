@@ -1,6 +1,25 @@
 import type { MetadataRoute } from 'next';
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
 import { createClient } from '@/lib/supabase/server';
 import { DEPARTMENTS, SITE_URL } from '@/lib/constants';
+
+function getBlogPosts(): Array<{ slug: string; date: string }> {
+  try {
+    const postsDir = path.join(process.cwd(), 'content/blog');
+    const files = fs.readdirSync(postsDir);
+    return files
+      .filter((f) => f.endsWith('.md'))
+      .map((filename) => {
+        const slug = filename.replace(/\.md$/, '');
+        const { data } = matter(fs.readFileSync(path.join(postsDir, filename), 'utf8'));
+        return { slug, date: (data.date as string) ?? new Date().toISOString() };
+      });
+  } catch {
+    return [];
+  }
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = SITE_URL;
@@ -136,6 +155,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
+  // Blog posts (from markdown files)
+  const blogPosts = getBlogPosts();
+  const blogPages: MetadataRoute.Sitemap = blogPosts.map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.date),
+    changeFrequency: 'monthly',
+    priority: 0.9,
+  }));
+
   return [
     ...staticPages,
     ...departmentPages,
@@ -144,5 +172,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...mcpPages,
     ...updatePages,
     ...creatorPages,
+    ...blogPages,
   ];
 }
