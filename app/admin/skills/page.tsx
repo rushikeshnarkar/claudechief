@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Plus, Pencil, Trash2, Search, X, Check, ExternalLink, Loader2, Upload, FileText, Download } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import AdminAuthGate from '@/components/admin/AdminAuthGate';
 
 const DEPARTMENTS = ['marketing', 'sales', 'design', 'content', 'founders', 'operations', 'finance', 'research'];
 const TIERS = ['free', 'elite'];
@@ -159,6 +160,7 @@ export default function AdminSkillsPage() {
   }
 
   return (
+    <AdminAuthGate>
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -341,5 +343,6 @@ export default function AdminSkillsPage() {
         </div>
       )}
     </div>
+    </AdminAuthGate>
   );
 }

@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import { Bookmark, Zap, Cpu, Users, ArrowRight, TrendingUp, Eye, Download, Plus } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
+import { requireAdmin } from '@/lib/authGuard';
 
 export default async function AdminDashboard() {
+  await requireAdmin();
   const supabase = await createClient();
 
   // Fetch real counts from all tables in parallel

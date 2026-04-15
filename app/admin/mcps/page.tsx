@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Plus, Pencil, Trash2, Search, X, Check, Loader2, Upload, FileText } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import AdminAuthGate from '@/components/admin/AdminAuthGate';
 
 const DEPARTMENTS = ['marketing', 'sales', 'design', 'content', 'founders', 'operations', 'finance', 'research'];
 const DIFFICULTIES = ['easy', 'medium', 'advanced'];
@@ -137,6 +138,7 @@ export default function AdminMCPsPage() {
   if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 text-[#D97757] animate-spin" /></div>;
 
   return (
+    <AdminAuthGate>
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -237,5 +239,6 @@ export default function AdminMCPsPage() {
         </div>
       )}
     </div>
+    </AdminAuthGate>
   );
 }
