@@ -57,10 +57,7 @@ export default async function UpdatesPage() {
           <p className="text-lg text-[var(--color-text-secondary)] max-w-xl leading-relaxed animate-fade-up animate-delay-200">
             Curated feed of all Anthropic releases, model updates, API changes, and announcements with editorial context.
           </p>
-          <p className="text-xs text-[var(--color-text-muted)] mt-4 animate-fade-up animate-delay-300">
-            Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-          </p>
-        </div>
+                  </div>
       </section>
 
       {/* ─── TYPE FILTER TABS ─── */}

@@ -89,9 +89,6 @@ export default async function CreatorsPage() {
           <p className="text-lg text-[var(--color-text-secondary)] max-w-xl leading-relaxed animate-fade-up animate-delay-200">
             People producing high-quality Claude content. Discover creators, their platforms, and their best resources.
           </p>
-          <p className="text-xs text-[var(--color-text-muted)] mt-4 animate-fade-up animate-delay-300">
-            Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-          </p>
         </div>
       </section>
 
@@ -155,8 +152,8 @@ export default async function CreatorsPage() {
                       {creator.focus_area && (
                         <div className="mb-4">
                           <span
-                            className="inline-flex items-center px-3 py-1.5 text-[10px] font-semibold tracking-wider uppercase rounded-full border"
-                            style={{ background: platformStyle.bg, color: platformStyle.text, borderColor: `${platformStyle.text}22` }}
+                            className="badge"
+                            style={{ background: platformStyle.bg, color: platformStyle.text, border: `1px solid ${platformStyle.text}30` }}
                           >
                             {creator.focus_area}
                           </span>

@@ -118,9 +118,6 @@ export default async function WorkflowsPage() {
                       <span className="badge badge-dept">
                         {workflow.department.charAt(0).toUpperCase() + workflow.department.slice(1)}
                       </span>
-                      <span className="badge" style={{ background: 'var(--color-blue-muted)', color: 'var(--color-blue)', border: '1px solid rgba(90,138,181,0.25)' }}>
-                        Workflow
-                      </span>
                     </div>
 
                     <div className="flex items-center gap-4 text-xs text-[var(--color-text-muted)] pt-3 border-t border-[var(--color-border-subtle)]">
