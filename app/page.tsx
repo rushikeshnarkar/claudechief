@@ -151,9 +151,9 @@ export default async function HomePage() {
       </section>
 
       {/* ─── STATS STRIP ─── */}
-      <section className="relative px-4 sm:px-6 lg:px-8 -mt-8 z-20">
-        <div className="container max-w-5xl mx-auto">
-          <div className="grid grid-cols-3 gap-3 animate-fade-up animate-delay-600">
+      <section className="px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="container max-w-4xl mx-auto">
+          <div className="stats-grid">
             {[
               { label: 'Skills', value: skillsCount.count ?? 0, color: 'var(--color-accent)' },
               { label: 'Workflows', value: workflowsCount.count ?? 0, color: 'var(--color-blue)' },
@@ -161,21 +161,15 @@ export default async function HomePage() {
             ].map((stat) => (
               <div
                 key={stat.label}
-                className="relative p-5 bg-[rgba(20,18,16,0.9)] backdrop-blur-lg border border-[var(--color-border)] rounded-2xl text-center overflow-hidden group"
+                className="stat-card"
               >
                 <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ background: `radial-gradient(ellipse at top, ${stat.color}08, transparent 70%)` }}
-                />
-                <div
-                  className="text-3xl sm:text-4xl font-display font-bold tracking-tight mb-1"
+                  className="stat-value"
                   style={{ color: stat.color }}
                 >
                   {stat.value.toLocaleString()}
                 </div>
-                <div className="text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-widest">
-                  {stat.label}
-                </div>
+                <div className="stat-label">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -208,8 +202,8 @@ export default async function HomePage() {
                   href={`/${dept.slug}`}
                   className="group relative block p-5 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-2xl overflow-hidden transition-all duration-300 hover:border-[var(--color-border-hover)] hover:shadow-[0_0_30px_rgba(196,99,58,0.06)] hover:-translate-y-0.5"
                 >
-                  {/* Top gradient accent */}
-                  <div className={`absolute top-0 left-0 right-0 h-px bg-gradient-to-r ${DEPT_GRADIENTS[dept.slug]} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+                  {/* Top gradient accent — scaleX reveal */}
+                  <div className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${DEPT_GRADIENTS[dept.slug]} origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300`} />
 
                   {/* Icon letter */}
                   <div className="w-10 h-10 rounded-xl bg-[var(--color-bg-base)] border border-[var(--color-border)] flex items-center justify-center mb-4 text-sm font-bold font-display text-[var(--color-text-muted)] group-hover:text-[var(--color-accent)] transition-colors">
@@ -238,12 +232,12 @@ export default async function HomePage() {
           <div className="container max-w-5xl mx-auto">
             <ScrollReveal>
               <div className="flex items-end justify-between mb-10">
-                <div>
-                  <div className="inline-flex items-center gap-2 text-xs font-medium tracking-[0.1em] uppercase text-[var(--color-sage)] mb-4">
-                    <span className="w-5 h-px bg-[var(--color-sage)]" />
+                <div className="text-left">
+                  <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.12em] uppercase mb-4" style={{ color: 'var(--color-sage)' }}>
+                    <span className="w-5 h-px" style={{ background: 'var(--color-sage)' }} />
                     Featured
                   </div>
-                  <h2 className="font-display text-3xl sm:text-4xl font-bold text-[var(--color-text-primary)] tracking-[-0.03em] mb-2">
+                  <h2 className="font-display text-3xl sm:text-4xl font-bold text-[var(--color-text-primary)] tracking-[-0.03em] mb-2 leading-[1.1]">
                     Top skills
                   </h2>
                   <p className="text-[var(--color-text-muted)] text-base">
@@ -333,32 +327,29 @@ export default async function HomePage() {
       )}
 
       {/* ─── CTA BAND ─── */}
-      <section className="px-4 sm:px-6 lg:px-8 pb-16">
-        <div className="container max-w-5xl mx-auto">
+      <section className="px-8 pb-20">
+        <div className="container max-w-3xl mx-auto">
           <ScrollReveal>
-            <div className="relative p-10 sm:p-14 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-3xl overflow-hidden text-center">
+            <div className="cta-card">
               {/* Corner glows */}
-              <div className="absolute top-0 left-0 w-64 h-64 bg-[radial-gradient(ellipse,rgba(196,99,58,0.1)_0%,transparent_70%)]" />
-              <div className="absolute bottom-0 right-0 w-64 h-64 bg-[radial-gradient(ellipse,rgba(122,154,94,0.08)_0%,transparent_70%)]" />
-
-              {/* Decorative ring */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border border-[rgba(196,99,58,0.04)] rounded-full pointer-events-none" />
+              <div className="cta-glow-tl" />
+              <div className="cta-glow-br" />
 
               <div className="relative">
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[var(--color-accent-muted)] border border-[rgba(196,99,58,0.2)] mb-6">
+                <div className="cta-icon">
                   <Sparkles className="w-6 h-6 text-[var(--color-accent)]" />
                 </div>
-                <h2 className="font-display text-2xl sm:text-3xl font-bold text-[var(--color-text-primary)] tracking-[-0.03em] mb-3">
+                <h2 className="font-display text-3xl font-bold text-[var(--color-text-primary)] tracking-[-0.03em] mb-3 leading-[1.1]">
                   Know a skill others need?
                 </h2>
-                <p className="text-[var(--color-text-secondary)] text-base max-w-md mx-auto mb-8">
+                <p className="text-[var(--color-text-secondary)] text-base max-w-md mx-auto mb-8 leading-relaxed">
                   Share your Claude expertise with the community. Every great skill started with someone like you.
                 </p>
                 <Link
                   href="/submit"
-                  className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-[var(--color-text-primary)] bg-[var(--color-accent)] rounded-xl hover:bg-[var(--color-accent-hover)] transition-all hover:-translate-y-0.5 shadow-[0_8px_30px_rgba(196,99,58,0.2)]"
+                  className="cta-btn"
                 >
-                  <Zap className="w-5 h-5" />
+                  <Sparkles className="w-5 h-5" />
                   Submit a skill
                 </Link>
               </div>

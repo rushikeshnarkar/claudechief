@@ -10,8 +10,8 @@ export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full">
-      <nav className="mx-4 mt-4 rounded-2xl bg-[rgba(20,18,16,0.85)] backdrop-blur-2xl border border-[var(--color-border)]">
+    <header className="sticky top-4 z-50 w-full px-4">
+      <nav className="rounded-2xl bg-[rgba(20,18,16,0.85)] backdrop-blur-2xl border border-[var(--color-border)]">
         <div className="container flex items-center justify-between h-16 px-6">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group" aria-label="Claude Chief - Home">
@@ -86,7 +86,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="mx-4 mt-2 rounded-2xl bg-[rgba(20,18,16,0.95)] backdrop-blur-2xl border border-[var(--color-border)] md:hidden">
+        <div className="mt-2 rounded-2xl bg-[rgba(20,18,16,0.95)] backdrop-blur-2xl border border-[var(--color-border)] md:hidden">
           <nav className="p-4 flex flex-col gap-1">
             {NAV_LINKS.map((link) => (
               <Link

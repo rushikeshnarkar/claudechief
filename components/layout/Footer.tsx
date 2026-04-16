@@ -114,7 +114,7 @@ export default function Footer() {
         <div className="pt-8 border-t border-[var(--color-border-subtle)]">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-xs text-[var(--color-text-muted)]">
-              &copy; {currentYear} {SITE_NAME}. Not affiliated with Anthropic.
+              &copy; 2026 {SITE_NAME}. Not affiliated with Anthropic.
             </p>
             {/* Decorative terracotta diamond */}
             <span className="w-2 h-2 bg-[var(--color-accent)] rotate-45" />
