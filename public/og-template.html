@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Chief — OG Image</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,700&family=DM+Sans:wght@400;500;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1200px;
+    height: 630px;
+    background-color: #0C0A08;
+    font-family: 'DM Sans', sans-serif;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Grid pattern */
+  body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(196,99,58,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(196,99,58,0.06) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+
+  /* Ambient terracotta orb */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .orb-1 {
+    top: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(196,99,58,0.18) 0%, rgba(196,99,58,0.08) 40%, transparent 70%);
+  }
+  .orb-2 {
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 250px;
+    background: radial-gradient(ellipse, rgba(201,139,58,0.08) 0%, transparent 70%);
+  }
+
+  .container {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 900px;
+    padding: 0 60px;
+  }
+
+  /* Top pill badge */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 20px;
+    background: rgba(20,18,16,0.9);
+    border: 1px solid rgba(196,99,58,0.3);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #B5AFA2;
+    letter-spacing: 0.05em;
+    margin-bottom: 36px;
+  }
+  .badge-dot {
+    width: 8px;
+    height: 8px;
+    background: #C4633A;
+    border-radius: 50%;
+    position: relative;
+  }
+  .badge-dot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: #C4633A;
+    animation: ping 1.5s cubic-bezier(0,0,0.2,1) infinite;
+  }
+  @keyframes ping {
+    75%, 100% { transform: scale(2); opacity: 0; }
+  }
+
+  /* Logo */
+  .logo-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .logo-mark {
+    width: 44px;
+    height: 44px;
+    background: #C4633A;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .logo-mark::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #0C0A08;
+    border-radius: 4px;
+    top: 8px;
+    right: 8px;
+    transform: rotate(12deg);
+  }
+  .logo-mark::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: #0C0A08;
+    border-radius: 50%;
+    bottom: 8px;
+    left: 8px;
+  }
+  .brand-name {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: #F7F3EC;
+    letter-spacing: -0.02em;
+  }
+
+  /* Headline */
+  .headline {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 52px;
+    font-weight: 700;
+    color: #F7F3EC;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .headline em {
+    font-style: italic;
+    color: #C4633A;
+  }
+
+  /* Subline */
+  .subline {
+    font-size: 20px;
+    color: #B5AFA2;
+    font-weight: 400;
+    line-height: 1.5;
+    margin-bottom: 40px;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Bottom row */
+  .bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    font-size: 14px;
+    color: #6E665C;
+  }
+  .bottom-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .diamond {
+    width: 6px;
+    height: 6px;
+    background: #C4633A;
+    transform: rotate(45deg);
+    opacity: 0.8;
+  }
+  .sep { width: 4px; height: 4px; background: #6E665C; border-radius: 50%; }
+
+  /* Decorative accent line at top */
+  .accent-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #C4633A, transparent);
+    opacity: 0.6;
+  }
+</style>
+</head>
+<body>
+  <div class="accent-line"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="container">
+    <!-- Status pill -->
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Live curated directory
+    </div>
+
+    <!-- Logo -->
+    <div class="logo-row">
+      <div class="logo-mark"></div>
+      <span class="brand-name">Claude Chief</span>
+    </div>
+
+    <!-- Headline -->
+    <h1 class="headline">Find the Claude skill, workflow, or <em>MCP</em><br>for the job.</h1>
+
+    <!-- Subline -->
+    <p class="subline">A hand-picked library of prompts, agents, and integrations<br>from the people actually using them.</p>
+
+    <!-- Trust row -->
+    <div class="bottom-row">
+      <div class="bottom-item">
+        <span class="diamond"></span>
+        Free to explore
+      </div>
+      <span class="sep"></span>
+      <div class="bottom-item">
+        <span class="diamond"></span>
+        Updated daily
+      </div>
+      <span class="sep"></span>
+      <div class="bottom-item">
+        <span class="diamond"></span>
+        Human curated
+      </div>
+    </div>
+  </div>
+</body>
+</html>
