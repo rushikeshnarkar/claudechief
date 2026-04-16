@@ -121,15 +121,15 @@ export default async function MCPsPage() {
                       )}
                     </div>
 
-                    {/* Install command callout */}
-                    {mcp.install_command && (
+                    {/* Install link callout */}
+                    {mcp.install_link && (
                       <div className="mt-3 px-3 py-2 bg-[var(--color-bg-base)] border border-[rgba(122,154,94,0.15)] rounded-xl">
                         <div className="flex items-center gap-2 text-xs text-[var(--color-sage)] font-medium mb-1">
                           <Terminal className="w-3 h-3" />
                           Install
                         </div>
                         <code className="text-[11px] font-mono text-[var(--color-text-muted)] truncate block">
-                          {mcp.install_command}
+                          {mcp.install_link}
                         </code>
                       </div>
                     )}
