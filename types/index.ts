@@ -192,6 +192,5 @@ export interface SearchResult {
 export interface DepartmentInfo {
   name: string;
   slug: Department;
-  count: number;
   description: string;
 }

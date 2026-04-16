@@ -1,11 +1,10 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { ArrowLeft, ExternalLink, Bookmark, User, Calendar, Star } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Bookmark, User, Calendar, Star, Copy, ExternalLink as OpenIcon } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { formatNumber } from '@/lib/utils';
 import { SITE_URL } from '@/lib/constants';
-import DownloadButton from '@/components/DownloadButton';
 import { SkillActions } from './SkillActions';
 
 interface SkillDetailPageProps {
@@ -120,7 +119,7 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
             </div>
             <div className="flex items-center gap-2 text-[var(--color-text-secondary)]">
               <Calendar className="w-4 h-4" />
-              <span>{new Date(skill.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+              <span>Added {new Date(skill.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
             </div>
           </div>
         </div>
@@ -136,27 +135,46 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
               {skill.prompt_preview && (
                 <div className="relative p-8 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-2xl overflow-hidden">
                   <div className="absolute top-0 left-0 w-32 h-32 bg-[radial-gradient(circle_at_top_left,rgba(196,99,58,0.08),transparent_70%)]" />
-                  <h2 className="font-display text-xl font-bold text-[var(--color-text-primary)] mb-5 flex items-center gap-3">
-                    <span className="w-10 h-10 flex items-center justify-center bg-[var(--color-accent-muted)] rounded-xl">
-                      <Star className="w-5 h-5 text-[var(--color-accent)]" />
-                    </span>
-                    Prompt Preview
-                  </h2>
-                  <pre className="text-sm font-mono text-[var(--color-text-secondary)] leading-relaxed whitespace-pre-wrap bg-[var(--color-bg-base)] rounded-xl p-5 border border-[var(--color-border)] overflow-x-auto">
+                  <div className="flex items-center justify-between mb-5">
+                    <h2 className="font-display text-xl font-bold text-[var(--color-text-primary)] flex items-center gap-3">
+                      <span className="w-10 h-10 flex items-center justify-center bg-[var(--color-accent-muted)] rounded-xl">
+                        <Star className="w-5 h-5 text-[var(--color-accent)]" />
+                      </span>
+                      Prompt
+                    </h2>
+                    <div className="flex items-center gap-2">
+                      <Copy className="w-4 h-4 text-[var(--color-text-muted)]" />
+                      <span className="text-xs text-[var(--color-text-muted)]">Click to copy</span>
+                    </div>
+                  </div>
+                  <pre
+                    className="text-sm font-mono text-[var(--color-text-secondary)] leading-relaxed whitespace-pre-wrap bg-[var(--color-bg-base)] rounded-xl p-5 border border-[var(--color-border)] overflow-x-auto code-block"
+                    onClick={() => navigator.clipboard?.writeText(skill.prompt_preview)}
+                    style={{ cursor: 'pointer' }}
+                    title="Click to copy prompt"
+                  >
                     {skill.prompt_preview}
                   </pre>
+                  {/* Open in Claude CTA */}
+                  <div className="mt-4 flex items-center gap-3">
+                    <a
+                      href={`https://claude.ai/new?q=${encodeURIComponent(skill.prompt_preview)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-accent)] text-[var(--color-text-primary)] rounded-xl text-sm font-semibold hover:bg-[var(--color-accent-hover)] transition-all hover:-translate-y-0.5"
+                    >
+                      <OpenIcon className="w-4 h-4" />
+                      Open in Claude
+                    </a>
+                    <span className="text-xs text-[var(--color-text-muted)]">
+                      Launch this prompt directly in Claude
+                    </span>
+                  </div>
                 </div>
               )}
 
-              {/* Related Resources */}
-              <div className="p-8 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-2xl">
-                <h2 className="font-display text-xl font-bold text-[var(--color-text-primary)] mb-4">
-                  Related Resources
-                </h2>
-                <p className="text-sm text-[var(--color-text-muted)]">
-                  More {deptLabel} skills coming soon…
-                </p>
-              </div>
+              {/* Related Resources — hide until we have real data */}
+              {/* kept for structure — populated via CMS or related skills query */}
             </div>
 
             {/* Sidebar */}

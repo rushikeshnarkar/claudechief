@@ -1008,3 +1008,262 @@ a:hover {
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(196, 99, 58, 0.2);
 }
+
+/* ─── TAG SYSTEM (3 classes per audit) ─── */
+
+/* Category tag — filled chip, terracotta */
+.tag-cat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--color-accent-muted);
+  color: var(--color-accent);
+  border: 1px solid rgba(196, 99, 58, 0.2);
+  white-space: nowrap;
+}
+
+/* Tier tag — outline pill */
+.tag-tier {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+/* Status tag — dot + text */
+.tag-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  border: none;
+  white-space: nowrap;
+}
+
+.tag-status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tag-status.danger::before { background: #DC2626; }
+.tag-status.warning::before { background: #F59E0B; }
+.tag-status.success::before { background: var(--color-sage); }
+.tag-status.accent::before { background: var(--color-accent); }
+
+/* ─── EASING CURVE TOKENS ─── */
+:root {
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 200ms;
+  --duration-medium: 400ms;
+  --duration-hero: 600ms;
+}
+
+/* Standardize transitions to use the easing curve */
+a, button, .btn {
+  transition: all var(--duration-fast) var(--ease-out-expo);
+}
+
+/* ─── CODE BLOCK BRAND TREATMENT ─── */
+.code-block {
+  position: relative;
+  background: linear-gradient(135deg, var(--color-bg-elevated) 0%, var(--color-bg-base) 100%);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 24px rgba(196, 99, 58, 0.06);
+  overflow: hidden;
+}
+
+.code-block::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--color-accent), transparent);
+  opacity: 0.3;
+}
+
+/* Prompt mono */
+.prompt-mono {
+  font-family: 'DM Mono', 'Fira Code', monospace;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ─── SECTION HEADER PATTERN ─── */
+.section-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.section-overline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 16px;
+}
+
+.section-overline-line {
+  width: 20px;
+  height: 1px;
+  background: var(--color-accent);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--color-text-primary);
+  margin-bottom: 12px;
+}
+
+.section-sub {
+  font-size: 15px;
+  color: var(--color-text-muted);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* ─── GRID DEPARTMENTS ─── */
+.grid-depts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+@media (min-width: 640px) {
+  .grid-depts {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+}
+
+/* ─── HERO TRUST STRIP ─── */
+.hero-trust {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 40px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+  flex-wrap: wrap;
+}
+
+.hero-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-trust-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--color-accent);
+  transform: rotate(45deg);
+  opacity: 0.7;
+}
+
+.hero-trust-sep {
+  width: 4px;
+  height: 4px;
+  background: var(--color-text-muted);
+  border-radius: 50%;
+}
+
+/* ─── CARD ACCENT BAR REVEAL ─── */
+.card-accent-bar {
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-accent), transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s var(--ease-out-expo);
+}
+
+.group:hover .card-accent-bar,
+.group-hover:hover .card-accent-bar {
+  transform: scaleX(1);
+}
+
+/* ─── DEPT CARD TOP BAR ─── */
+.dept-card-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-accent), transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s var(--ease-out-expo);
+}
+
+/* ─── FOCUS RING OVERRIDE ─── */
+/* Remove default blue focus, use terracotta */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── CUSTOM SCROLLBAR (refined) ─── */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(196, 99, 58, 0.25);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(196, 99, 58, 0.5);
+}
+
+/* ─── REDUCED MOTION ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

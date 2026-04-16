@@ -15,14 +15,14 @@ export default function DepartmentGrid() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-semibold text-sm text-[var(--color-text-primary)] group-hover:text-[var(--color-terra)] transition-colors">
+                <h3 className="font-semibold text-sm text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors">
                   {dept.name}
                 </h3>
                 <p className="text-xs text-[var(--color-text-muted)] mt-1">
-                  {dept.count} resources
+                  Explore resources
                 </p>
               </div>
-              <ArrowRight className="w-4 h-4 text-[var(--color-text-muted)] group-hover:text-[var(--color-terra)] group-hover:translate-x-1 transition-all" />
+              <ArrowRight className="w-4 h-4 text-[var(--color-text-muted)] group-hover:text-[var(--color-accent)] group-hover:translate-x-1 transition-all" />
             </div>
           </Link>
         ))}

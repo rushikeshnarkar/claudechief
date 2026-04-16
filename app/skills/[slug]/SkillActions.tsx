@@ -33,18 +33,20 @@ export function SkillActions({ skill, sourceLabel }: SkillActionsProps) {
               href={skill.source_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn btn-outline w-full justify-center"
+              className="btn btn-primary w-full justify-center"
             >
               View on {sourceLabel}
               <ExternalLink className="w-4 h-4" />
             </a>
           ) : null}
-          <DownloadButton
-            resourceId={skill.id}
-            resourceTitle={skill.title}
-            resourceType="skills"
-            hasFile={!!skill.asset_file}
-          />
+          {skill.asset_file && (
+            <DownloadButton
+              resourceId={skill.id}
+              resourceTitle={skill.title}
+              resourceType="skills"
+              hasFile={!!skill.asset_file}
+            />
+          )}
           <SaveButton
             resourceId={skill.id}
             resourceTitle={skill.title}

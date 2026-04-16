@@ -108,16 +108,16 @@ export default async function HomePage() {
 
           {/* Giant headline */}
           <h1 className="font-display text-[clamp(2.8rem,9vw,5.5rem)] font-bold leading-[1.0] tracking-[-0.035em] mb-8 animate-fade-up animate-delay-100">
-            <span className="text-[var(--color-text-primary)]">Claude is</span>
+            <span className="text-[var(--color-text-primary)]">Find the Claude skill,</span>
             <br />
-            <span className="text-[var(--color-text-primary)]">redefining what</span>
+            <span className="text-[var(--color-text-primary)]">workflow, or MCP</span>
             <br />
-            <span className="text-gradient-accent italic">software can do.</span>
+            <span className="text-gradient-accent italic">for the job.</span>
           </h1>
 
           {/* Subtext */}
           <p className="text-lg sm:text-xl text-[var(--color-text-secondary)] leading-relaxed max-w-2xl mx-auto mb-12 animate-fade-up animate-delay-200">
-            Stop hunting across YouTube, GitHub, and Twitter. Every skill, workflow, MCP, update, and creator — curated and ready.
+            A hand-picked library of prompts, agents, and integrations from the people actually using them. No SEO sludge, no AI-generated junk.
           </p>
 
           {/* Search */}
@@ -213,7 +213,7 @@ export default async function HomePage() {
                   <h3 className="font-display font-semibold text-[var(--color-text-primary)] text-[15px] mb-1 group-hover:text-[var(--color-accent)] transition-colors">
                     {dept.name}
                   </h3>
-                  <p className="text-sm text-[var(--color-text-muted)]">{dept.count} resources</p>
+                  <p className="text-sm text-[var(--color-text-muted)]">Explore resources</p>
 
                   {/* Arrow indicator */}
                   <div className="absolute bottom-4 right-4 text-[var(--color-text-muted)] group-hover:text-[var(--color-accent)] group-hover:translate-x-0.5 transition-all opacity-0 group-hover:opacity-100">

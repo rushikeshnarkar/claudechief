@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Search, Users, ExternalLink } from 'lucide-react';
+import { Search, Users, ExternalLink, ArrowRight } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 
 export const metadata: Metadata = {
@@ -11,10 +11,10 @@ export const metadata: Metadata = {
 const PLATFORM_COLORS: Record<string, { bg: string; text: string }> = {
   twitter: { bg: 'rgba(56,163,255,0.12)', text: '#38A3FF' },
   youtube: { bg: 'rgba(255,59,48,0.12)', text: '#FF3B30' },
-  github: { bg: 'rgba(255,255,255,0.08)', text: '#F5F0EB' },
+  github: { bg: 'rgba(255,255,255,0.06)', text: '#B5AFA2' },
   blog: { bg: 'rgba(74,222,128,0.12)', text: '#4ADE80' },
   linkedin: { bg: 'rgba(10,102,194,0.12)', text: '#0A66C2' },
-  newsletter: { bg: 'rgba(201,134,42,0.12)', text: '#D97757' },
+  newsletter: { bg: 'var(--color-accent-muted)', text: 'var(--color-accent)' },
 };
 
 function formatFollowerCount(count: number): string {
@@ -66,112 +66,126 @@ export default async function CreatorsPage() {
   return (
     <>
       {/* ─── HERO HEADER ─── */}
-      <section className="pt-28 pb-10 px-4 sm:px-6 lg:px-8 bg-[#1A1720]">
-        <div className="container max-w-7xl mx-auto">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-[#D97757]/20 rounded-xl flex items-center justify-center">
-              <Users className="w-5 h-5 text-[#D97757]" />
+      <section className="pt-20 pb-20 px-4 sm:px-6 lg:px-8 bg-[var(--color-bg-surface)] relative overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[radial-gradient(ellipse,rgba(196,99,58,0.08)_0%,transparent_70%)]" />
+        </div>
+
+        <div className="container max-w-5xl mx-auto relative">
+          <div className="flex items-center gap-3 mb-4 animate-fade-up">
+            <div className="w-10 h-10 bg-[var(--color-accent-muted)] rounded-xl flex items-center justify-center">
+              <Users className="w-5 h-5 text-[var(--color-accent)]" />
             </div>
-            <span className="text-[#6B6158] text-sm">The Claude ecosystem&apos;s best minds</span>
+            <span className="text-[var(--color-text-muted)] text-sm">The Claude ecosystem&apos;s best minds</span>
           </div>
-          <h1 className="font-display text-3xl sm:text-4xl font-bold text-[#F5F0EB] tracking-tight mb-3">
-            Claude Creators
+          <div className="inline-flex items-center gap-2 text-xs font-medium tracking-[0.08em] uppercase text-[var(--color-accent)] mb-4 animate-fade-up animate-delay-100">
+            <span className="w-4 h-px bg-[var(--color-accent)]" />
+            Directory
+          </div>
+          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-[var(--color-text-primary)] tracking-[-0.03em] leading-[1.05] mb-4 animate-fade-up animate-delay-100">
+            Creators
           </h1>
-          <p className="text-[#A99E92] text-lg max-w-2xl leading-relaxed">
+          <div className="w-24 h-1 bg-gradient-to-r from-[var(--color-accent)] to-transparent mb-6 animate-fade-up animate-delay-100" />
+          <p className="text-lg text-[var(--color-text-secondary)] max-w-xl leading-relaxed animate-fade-up animate-delay-200">
             People producing high-quality Claude content. Discover creators, their platforms, and their best resources.
+          </p>
+          <p className="text-xs text-[var(--color-text-muted)] mt-4 animate-fade-up animate-delay-300">
+            Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
           </p>
         </div>
       </section>
 
       {/* ─── SEARCH ─── */}
-      <section className="bg-[#1A1720] px-4 sm:px-6 lg:px-8 pb-8">
-        <div className="container max-w-7xl mx-auto">
-          <div className="relative max-w-xl">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B6158] pointer-events-none" />
+      <section className="px-4 sm:px-6 lg:px-8 pb-8 bg-[var(--color-bg-surface)]">
+        <div className="container max-w-5xl mx-auto">
+          <div className="relative max-w-xl animate-fade-up animate-delay-400">
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--color-text-muted)] pointer-events-none" />
             <input
               type="search"
               placeholder="Search creators..."
-              className="w-full pl-14 pr-5 py-4 bg-[rgba(19,17,24,0.88)] border border-[rgba(54,46,40,0.5)] rounded-xl text-[#F5F0EB] placeholder:text-[#6B6158] backdrop-blur-xl focus:outline-none focus:border-[#D97757] transition-all min-h-12"
+              className="w-full pl-14 pr-5 py-4 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-2xl text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent)] focus:shadow-[0_0_0_4px_var(--color-accent-glow)] transition-all min-h-12"
             />
           </div>
         </div>
       </section>
 
       {/* ─── CREATORS GRID ─── */}
-      <section className="bg-[#0D0B0F] px-4 sm:px-6 lg:px-8 py-12">
-        <div className="container max-w-7xl mx-auto">
+      <section className="px-4 sm:px-6 lg:px-8 py-12 bg-[var(--color-bg-base)]">
+        <div className="container max-w-5xl mx-auto">
           {dbCreators.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-[#6B6158] text-lg">No creators found. Check back soon!</p>
+              <p className="text-[var(--color-text-muted)] text-lg">No creators found. Check back soon!</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {dbCreators.map((creator, index) => {
                 const platformStyle = PLATFORM_COLORS[creator.platform] || PLATFORM_COLORS.blog;
                 const platformLabel = creator.platform.charAt(0).toUpperCase() + creator.platform.slice(1);
-                const bestResources = Array.isArray(creator.best_resources)
-                  ? creator.best_resources[0]
-                  : null;
+                const initial = creator.name.charAt(0).toUpperCase();
 
                 return (
                   <article
                     key={creator.id}
-                    className="group relative p-6 bg-[linear-gradient(135deg,rgba(19,17,24,0.88)_0%,rgba(26,23,32,0.6)_100%)] border border-[rgba(54,46,40,0.5)] rounded-[22px] backdrop-blur-xl overflow-hidden hover:border-[#D97757] spring-hover animate-fadeUp"
+                    className="group relative bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-2xl overflow-hidden hover:border-[var(--color-border-hover)] transition-all duration-300 animate-fade-up"
                     style={{ animationDelay: `${index * 50}ms` }}
                   >
-                    {/* Platform Badge */}
-                    <div className="flex items-center gap-3 mb-4">
-                      <div
-                        className="w-12 h-12 rounded-xl flex items-center justify-center"
-                        style={{ background: platformStyle.bg }}
-                      >
-                        <PlatformIcon platform={creator.platform} className="w-6 h-6" color={platformStyle.text} />
+                    {/* Top accent bar */}
+                    <div className="h-0.5 w-full bg-gradient-to-r from-[var(--color-accent)] to-transparent origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+
+                    <div className="p-6">
+                      {/* Platform Badge + Avatar */}
+                      <div className="flex items-center gap-3 mb-4">
+                        <div
+                          className="w-12 h-12 rounded-xl flex items-center justify-center"
+                          style={{ background: platformStyle.bg }}
+                        >
+                          <PlatformIcon platform={creator.platform} className="w-5 h-5" color={platformStyle.text} />
+                        </div>
+                        <div>
+                          <h3 className="font-display font-semibold text-[var(--color-text-primary)] text-base group-hover:text-[var(--color-accent)] transition-colors">
+                            {creator.name}
+                          </h3>
+                          <span className="text-xs text-[var(--color-text-muted)]">
+                            {formatFollowerCount(creator.follower_count)} followers
+                          </span>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-body font-semibold text-[#F5F0EB] text-base">
-                          {creator.name}
-                        </h3>
-                        <span className="text-xs text-[#6B6158]">{formatFollowerCount(creator.follower_count)} followers</span>
-                      </div>
+
+                      {/* Focus Area Badge */}
+                      {creator.focus_area && (
+                        <div className="mb-4">
+                          <span
+                            className="inline-flex items-center px-3 py-1.5 text-[10px] font-semibold tracking-wider uppercase rounded-full border"
+                            style={{ background: platformStyle.bg, color: platformStyle.text, borderColor: `${platformStyle.text}22` }}
+                          >
+                            {creator.focus_area}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Bio */}
+                      {creator.bio && (
+                        <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-4 line-clamp-2">
+                          {creator.bio}
+                        </p>
+                      )}
+
+                      {/* Action */}
+                      {creator.profile_url && (
+                        <a
+                          href={creator.profile_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 text-sm text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors font-medium"
+                        >
+                          Follow on {platformLabel}
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                      )}
                     </div>
 
-                    {/* Focus Area */}
-                    <div className="mb-4">
-                      <span
-                        className="inline-flex items-center px-3 py-1.5 text-[10px] font-semibold tracking-wider uppercase rounded-full border"
-                        style={{ background: platformStyle.bg, color: platformStyle.text, borderColor: `${platformStyle.text}33` }}
-                      >
-                        {creator.focus_area}
-                      </span>
-                    </div>
-
-                    {/* Bio */}
-                    {creator.focus_area && (
-                      <p className="text-[#A99E92] text-sm leading-relaxed mb-4 line-clamp-2">
-                        {creator.focus_area}
-                      </p>
-                    )}
-
-                    {/* Best Resource */}
-                    {bestResources && (
-                      <div className="p-4 bg-[#131118]/50 rounded-xl border border-[rgba(54,46,40,0.3)] mb-5">
-                        <span className="text-[10px] text-[#6B6158] uppercase tracking-wider mb-1 block">Best Resource</span>
-                        <span className="text-sm text-[#F5F0EB] font-medium">{bestResources}</span>
-                      </div>
-                    )}
-
-                    {/* Action */}
-                    {creator.profile_url && (
-                      <a
-                        href={creator.profile_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-sm text-[#D97757] hover:text-[#E5886A] transition-colors font-medium"
-                      >
-                        Follow on {platformLabel}
-                        <ExternalLink className="w-4 h-4" />
-                      </a>
-                    )}
+                    {/* Bottom ambient glow */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-[rgba(196,99,58,0.02)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                   </article>
                 );
               })}
@@ -179,11 +193,13 @@ export default async function CreatorsPage() {
           )}
 
           {/* Load More */}
-          <div className="mt-12 text-center">
-            <button className="btn btn-outline text-base h-12 px-8">
-              Load more creators
-            </button>
-          </div>
+          {dbCreators.length > 0 && (
+            <div className="mt-12 text-center animate-fade-up">
+              <button className="btn btn-outline text-base h-12 px-8">
+                Load more creators
+              </button>
+            </div>
+          )}
         </div>
       </section>
     </>

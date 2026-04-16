@@ -3,11 +3,13 @@
 import Link from 'next/link';
 import { Search, User, Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { NAV_LINKS } from '@/lib/constants';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <header className="sticky top-4 z-50 w-full px-4">
@@ -26,15 +28,22 @@ export default function Navbar() {
 
           {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center gap-1">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] rounded-xl hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-elevated)] transition-all"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`px-4 py-2 text-sm font-medium rounded-xl transition-all ${
+                    isActive
+                      ? 'text-[var(--color-text-primary)] bg-[var(--color-accent)]'
+                      : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-elevated)]'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
 
           {/* Right Actions */}
@@ -88,16 +97,23 @@ export default function Navbar() {
       {isMenuOpen && (
         <div className="mt-2 rounded-2xl bg-[rgba(20,18,16,0.95)] backdrop-blur-2xl border border-[var(--color-border)] md:hidden">
           <nav className="p-4 flex flex-col gap-1">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setIsMenuOpen(false)}
-                className="px-4 py-3 text-sm font-medium text-[var(--color-text-secondary)] rounded-xl hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-elevated)] transition-all"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`px-4 py-3 text-sm font-medium rounded-xl transition-all ${
+                    isActive
+                      ? 'text-[var(--color-text-primary)] bg-[var(--color-accent)]'
+                      : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-elevated)]'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
             <div className="h-px bg-[var(--color-border)] my-2" />
             <Link
               href="/sign-in"
