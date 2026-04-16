@@ -1,14 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { Search, User, Menu, X } from 'lucide-react';
+import { User, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { NAV_LINKS } from '@/lib/constants';
+import { CommandPalette } from '@/components/CommandPalette';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const pathname = usePathname();
 
   return (
@@ -48,13 +48,8 @@ export default function Navbar() {
 
           {/* Right Actions */}
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className="p-2.5 rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-elevated)] transition-all"
-              aria-label="Search"
-            >
-              <Search className="w-5 h-5" />
-            </button>
+            {/* Command Palette trigger */}
+            <CommandPalette />
 
             <Link
               href="/sign-in"
@@ -74,23 +69,6 @@ export default function Navbar() {
             </button>
           </div>
         </div>
-
-        {/* Expandable Search Bar */}
-        {isSearchOpen && (
-          <div className="px-6 pb-4">
-            <form action="/search" method="GET" className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--color-text-muted)]" />
-              <input
-                type="search"
-                name="q"
-                placeholder="Search skills, workflows, MCPs, creators…"
-                className="w-full pl-12 pr-4 py-3 bg-[var(--color-bg-base)] border border-[var(--color-border)] rounded-xl text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent)] focus:shadow-[0_0_0_3px_var(--color-accent-glow)] transition-all"
-                autoFocus
-                aria-label="Search"
-              />
-            </form>
-          </div>
-        )}
       </nav>
 
       {/* Mobile Menu */}
