@@ -28,11 +28,9 @@ export function HomeSearch() {
 
       setActiveTab(tabId);
       document.querySelectorAll('[data-tab]').forEach(t => {
-        t.classList.remove('bg-[var(--color-accent)]', 'text-[var(--color-text-primary)]', 'font-semibold');
-        t.classList.add('text-[var(--color-text-secondary)]');
+        t.classList.remove('tab-active');
       });
-      target.classList.add('bg-[var(--color-accent)]', 'text-[var(--color-text-primary)]', 'font-semibold');
-      target.classList.remove('text-[var(--color-text-secondary)]');
+      target.classList.add('tab-active');
 
       const tabHrefs: Record<TabId, string> = {
         all: '/skills',
@@ -64,32 +62,41 @@ export function HomeSearch() {
   };
 
   return (
-    <div className="space-y-6 animate-fade-up animate-delay-300">
-      {/* Search Bar */}
-      <form onSubmit={handleSearch} className="relative max-w-xl mx-auto">
+    <div className="max-w-xl mx-auto">
+      {/* Search bar — premium glassmorphism */}
+      <form onSubmit={handleSearch} className="relative">
         <div className="relative flex items-center">
-          <Search className="absolute left-5 w-5 h-5 text-[var(--color-text-muted)] pointer-events-none" />
+          <div className="absolute left-5 w-5 h-5 flex items-center justify-center pointer-events-none">
+            <Search className="w-5 h-5 text-[var(--color-text-muted)]" />
+          </div>
           <input
             type="search"
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder="Search skills, workflows, MCPs, creators…"
-            className="w-full pl-14 pr-32 py-[18px] bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-2xl text-base text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent)] focus:shadow-[0_0_0_4px_var(--color-accent-glow)] transition-all"
+            className="w-full pl-14 pr-32 py-[18px] bg-[rgba(20,18,16,0.8)] backdrop-blur-lg border border-[var(--color-border)] rounded-2xl text-base text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent)] focus:shadow-[0_0_0_1px_rgba(196,99,58,0.3),0_0_30px_rgba(196,99,58,0.1)] transition-all"
           />
-          <button type="submit" className="absolute right-2 btn btn-primary h-11 px-5 text-sm">
-            <ArrowRight className="w-4 h-4" />
-            Explore
+          <button
+            type="submit"
+            className="absolute right-2 inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-[var(--color-text-primary)] bg-[var(--color-accent)] rounded-xl hover:bg-[var(--color-accent-hover)] transition-all min-h-11"
+          >
+            <Search className="w-4 h-4" />
+            <span className="hidden sm:inline">Explore</span>
           </button>
         </div>
       </form>
 
-      {/* Tab Navigation */}
-      <div className="flex gap-1.5 p-1.5 bg-[var(--color-bg-elevated)] rounded-xl mb-0 overflow-x-auto scrollbar-hide animate-fade-up animate-delay-400">
+      {/* Tab navigation */}
+      <div className="flex gap-1.5 p-1.5 bg-[rgba(20,18,16,0.6)] backdrop-blur-lg rounded-xl mt-3 overflow-x-auto scrollbar-hide">
         {RESOURCE_TABS.map((tab) => (
           <button
             key={tab.id}
             data-tab={tab.id}
-            className="px-5 py-2.5 text-sm font-medium rounded-lg text-[var(--color-text-secondary)] transition-all whitespace-nowrap min-h-11 hover:bg-[var(--color-bg-surface)] hover:text-[var(--color-text-primary)]"
+            className={`px-4 py-2 text-sm font-medium rounded-lg transition-all whitespace-nowrap min-h-10 flex-shrink-0 ${
+              activeTab === tab.id
+                ? 'bg-[var(--color-accent)] text-[var(--color-text-primary)] font-semibold shadow-[0_4px_12px_rgba(196,99,58,0.2)]'
+                : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)]'
+            }`}
           >
             {tab.label}
           </button>
@@ -100,5 +107,5 @@ export function HomeSearch() {
 }
 
 export function HomeTabs() {
-  return null; // Tabs are now inside HomeSearch
+  return null;
 }
