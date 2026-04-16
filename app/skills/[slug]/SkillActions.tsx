@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ExternalLink, Bookmark, User, Calendar, Share2, Star, Loader2 } from 'lucide-react';
+import { ExternalLink, Share2, User } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import DownloadButton from '@/components/DownloadButton';
 import SaveButton from '@/components/SaveButton';
@@ -23,9 +23,9 @@ export function SkillActions({ skill, sourceLabel }: SkillActionsProps) {
   return (
     <div className="space-y-5">
       {/* Action Card */}
-      <div className="p-6 bg-[rgba(19,17,24,0.88)] border border-[rgba(54,46,40,0.5)] rounded-[22px] backdrop-blur-xl">
-        <h3 className="font-body font-semibold text-[#F5F0EB] text-sm mb-4">
-          Get this skill
+      <div className="p-6 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-2xl">
+        <h3 className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--color-text-muted)] mb-4">
+          Get This Skill
         </h3>
         <div className="space-y-3">
           {skill.source_url ? (
@@ -54,21 +54,19 @@ export function SkillActions({ skill, sourceLabel }: SkillActionsProps) {
       </div>
 
       {/* Share Card */}
-      <div className="p-6 bg-[rgba(19,17,24,0.88)] border border-[rgba(54,46,40,0.5)] rounded-[22px] backdrop-blur-xl">
-        <h3 className="font-body font-semibold text-[#F5F0EB] text-sm mb-4">
-          Share this skill
+      <div className="p-6 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-2xl">
+        <h3 className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--color-text-muted)] mb-4">
+          Share This Skill
         </h3>
         <button
           onClick={handleCopyLink}
           className={`btn w-full justify-center transition-all ${
             copied
-              ? 'bg-[#4ADE80]/10 text-[#4ADE80] border border-[#4ADE80]/30'
+              ? 'bg-[rgba(122,154,94,0.15)] text-[var(--color-sage)] border border-[rgba(122,154,94,0.3)]'
               : 'btn-outline'
           }`}
         >
-          {copied ? (
-            'Copied!'
-          ) : (
+          {copied ? 'Copied!' : (
             <>
               <Share2 className="w-4 h-4" />
               Copy link
@@ -78,8 +76,8 @@ export function SkillActions({ skill, sourceLabel }: SkillActionsProps) {
       </div>
 
       {/* Creator Card */}
-      <div className="p-6 bg-[rgba(19,17,24,0.88)] border border-[rgba(54,46,40,0.5)] rounded-[22px] backdrop-blur-xl">
-        <h3 className="font-body font-semibold text-[#F5F0EB] text-sm mb-4">
+      <div className="p-6 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-2xl">
+        <h3 className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--color-text-muted)] mb-4">
           Creator
         </h3>
         {skill.creator_link ? (
@@ -87,17 +85,17 @@ export function SkillActions({ skill, sourceLabel }: SkillActionsProps) {
             href={skill.creator_link}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 text-[#A99E92] hover:text-[#D97757] transition-colors"
+            className="flex items-center gap-3 text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
           >
-            <div className="w-10 h-10 bg-[#131118] rounded-full flex items-center justify-center text-lg">
-              <User className="w-5 h-5 text-[#6B6158]" />
+            <div className="w-10 h-10 bg-[var(--color-bg-base)] rounded-full flex items-center justify-center">
+              <User className="w-5 h-5 text-[var(--color-text-muted)]" />
             </div>
             <span className="font-medium">{skill.creator_name}</span>
           </a>
         ) : (
-          <div className="flex items-center gap-3 text-[#A99E92]">
-            <div className="w-10 h-10 bg-[#131118] rounded-full flex items-center justify-center text-lg">
-              <User className="w-5 h-5 text-[#6B6158]" />
+          <div className="flex items-center gap-3 text-[var(--color-text-secondary)]">
+            <div className="w-10 h-10 bg-[var(--color-bg-base)] rounded-full flex items-center justify-center">
+              <User className="w-5 h-5 text-[var(--color-text-muted)]" />
             </div>
             <span className="font-medium">{skill.creator_name}</span>
           </div>

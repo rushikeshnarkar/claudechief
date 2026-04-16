@@ -21,11 +21,6 @@ export function HomeSearch() {
   const [activeTab, setActiveTab] = useState<TabId>('all');
 
   useEffect(() => {
-    // Init first tab as active
-    const btn = document.querySelector('[data-tab="all"]') as HTMLButtonElement | null;
-    if (btn) btn.classList.add('bg-[#D97757]', 'text-[#F5F0EB]', 'font-semibold');
-    else document.querySelector('[data-tab="all"]')?.classList.add('bg-[#D97757]', 'text-[#F5F0EB]', 'font-semibold');
-
     const handleTabClick = (e: MouseEvent) => {
       const target = e.currentTarget as HTMLButtonElement;
       const tabId = target.dataset.tab as TabId;
@@ -33,11 +28,11 @@ export function HomeSearch() {
 
       setActiveTab(tabId);
       document.querySelectorAll('[data-tab]').forEach(t => {
-        t.classList.remove('bg-[#D97757]', 'text-[#F5F0EB]', 'font-semibold');
-        t.classList.add('text-[#A99E92]');
+        t.classList.remove('bg-[var(--color-accent)]', 'text-[var(--color-text-primary)]', 'font-semibold');
+        t.classList.add('text-[var(--color-text-secondary)]');
       });
-      target.classList.add('bg-[#D97757]', 'text-[#F5F0EB]', 'font-semibold');
-      target.classList.remove('text-[#A99E92]');
+      target.classList.add('bg-[var(--color-accent)]', 'text-[var(--color-text-primary)]', 'font-semibold');
+      target.classList.remove('text-[var(--color-text-secondary)]');
 
       const tabHrefs: Record<TabId, string> = {
         all: '/skills',
@@ -69,37 +64,41 @@ export function HomeSearch() {
   };
 
   return (
-    <form onSubmit={handleSearch} className="relative max-w-xl mx-auto mb-6 animate-fadeUp animate-delay-3">
-      <div className="relative flex items-center">
-        <Search className="absolute left-5 w-5 h-5 text-[#6B6158] pointer-events-none" />
-        <input
-          type="search"
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          placeholder="Search skills, workflows, MCPs, creators…"
-          className="w-full pl-14 pr-32 py-[18px] bg-[rgba(19,17,24,0.88)] border border-[rgba(54,46,40,0.5)] rounded-[18px] text-base text-[#F5F0EB] placeholder:text-[#6B6158] backdrop-blur-xl focus:outline-none focus:border-[#D97757] focus:shadow-[0_0_0_4px_rgba(217,119,87,0.12)] transition-all"
-        />
-        <button type="submit" className="absolute right-2 btn btn-primary h-11 px-5 text-sm">
-          <ArrowRight className="w-4 h-4" />
-          Explore
-        </button>
+    <div className="space-y-6 animate-fade-up animate-delay-300">
+      {/* Search Bar */}
+      <form onSubmit={handleSearch} className="relative max-w-xl mx-auto">
+        <div className="relative flex items-center">
+          <Search className="absolute left-5 w-5 h-5 text-[var(--color-text-muted)] pointer-events-none" />
+          <input
+            type="search"
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="Search skills, workflows, MCPs, creators…"
+            className="w-full pl-14 pr-32 py-[18px] bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-2xl text-base text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent)] focus:shadow-[0_0_0_4px_var(--color-accent-glow)] transition-all"
+          />
+          <button type="submit" className="absolute right-2 btn btn-primary h-11 px-5 text-sm">
+            <ArrowRight className="w-4 h-4" />
+            Explore
+          </button>
+        </div>
+      </form>
+
+      {/* Tab Navigation */}
+      <div className="flex gap-1.5 p-1.5 bg-[var(--color-bg-elevated)] rounded-xl mb-0 overflow-x-auto scrollbar-hide animate-fade-up animate-delay-400">
+        {RESOURCE_TABS.map((tab) => (
+          <button
+            key={tab.id}
+            data-tab={tab.id}
+            className="px-5 py-2.5 text-sm font-medium rounded-lg text-[var(--color-text-secondary)] transition-all whitespace-nowrap min-h-11 hover:bg-[var(--color-bg-surface)] hover:text-[var(--color-text-primary)]"
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
-    </form>
+    </div>
   );
 }
 
 export function HomeTabs() {
-  return (
-    <div className="flex gap-1.5 p-1.5 bg-[#131118] rounded-xl mb-10 overflow-x-auto scrollbar-hide animate-fadeUp">
-      {RESOURCE_TABS.map((tab) => (
-        <button
-          key={tab.id}
-          data-tab={tab.id}
-          className="px-5 py-2.5 text-sm font-medium rounded-lg text-[#A99E92] transition-all whitespace-nowrap min-h-11 hover:bg-[rgba(54,46,40,0.3)]"
-        >
-          {tab.label}
-        </button>
-      ))}
-    </div>
-  );
+  return null; // Tabs are now inside HomeSearch
 }

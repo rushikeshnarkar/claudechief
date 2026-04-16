@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Bookmark, Zap, Shield, ArrowRight } from 'lucide-react';
+import { Bookmark } from 'lucide-react';
 import { DEPARTMENTS } from '@/lib/constants';
 import { createClient } from '@/lib/supabase/server';
 import { formatNumber } from '@/lib/utils';
 import { HomeSearch } from '@/components/HomeSearch';
-import { HomeTabs } from '@/components/HomeSearch';
 
 export const metadata: Metadata = {
   title: 'Claude Chief — Best Claude Skills Directory',
@@ -36,132 +35,171 @@ export default async function HomePage() {
     <>
       {/* ─── HERO SECTION ─── */}
       <section className="relative min-h-screen flex items-center justify-center px-4 pt-28 pb-20 overflow-hidden">
+        {/* Ambient terracotta glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[600px] pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-[radial-gradient(circle,rgba(217,119,87,0.08)_0%,transparent_70%)] rounded-full" />
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[radial-gradient(circle,rgba(106,155,204,0.06)_0%,transparent_70%)] rounded-full" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-[radial-gradient(ellipse,rgba(196,99,58,0.12)_0%,transparent_70%)] rounded-full" />
         </div>
 
         <div className="relative max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-[#131118] border border-[rgba(54,46,40,0.5)] rounded-full text-sm font-medium text-[#A99E92] mb-8 animate-fadeUp">
-            <span className="w-2 h-2 bg-[#D97757] rounded-full animate-pulse" />
+          {/* Status pill */}
+          <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-full text-sm text-[var(--color-text-secondary)] mb-8 animate-fade-up">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-accent)] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-accent)]" />
+            </span>
             <span>{totalResources} resources available</span>
           </div>
 
-          <h1 className="font-display text-[clamp(2.5rem,7vw,4.5rem)] font-bold leading-[1.1] tracking-[-0.03em] mb-6 animate-fadeUp animate-delay-1">
-            <span className="text-[#F5F0EB]">Claude is changing everything.</span>
+          {/* Headline */}
+          <h1 className="font-display text-[clamp(2.5rem,8vw,5rem)] font-bold leading-[1.05] tracking-[-0.03em] mb-6 animate-fade-up animate-delay-100">
+            <span className="text-[var(--color-text-primary)]">Claude is changing everything.</span>
             <br />
-            <span className="text-[#D97757] italic">Are you keeping up?</span>
+            <span className="text-[var(--color-accent)] italic">Are you keeping up?</span>
           </h1>
 
-          <p className="text-lg sm:text-xl text-[#A99E92] leading-relaxed max-w-2xl mx-auto mb-10 animate-fadeUp animate-delay-2">
+          {/* Subtext */}
+          <p className="text-lg sm:text-xl text-[var(--color-text-secondary)] leading-relaxed max-w-2xl mx-auto mb-10 animate-fade-up animate-delay-200">
             Stop hunting across YouTube, GitHub, and Twitter. Claude Chief brings every skill, workflow, MCP, update, and creator into one curated place so you always know what&apos;s possible.
           </p>
 
-          {/* Search Bar — client component */}
+          {/* Search Bar + Tabs */}
           <HomeSearch />
 
-          <div className="flex items-center justify-center gap-8 text-sm text-[#6B6158] animate-fadeUp animate-delay-4">
+          {/* Trust indicators — diamond bullets */}
+          <div className="flex items-center justify-center gap-8 text-sm text-[var(--color-text-muted)] animate-fade-up animate-delay-500">
             <span className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-[#D97757]" />
+              <span className="w-1.5 h-1.5 bg-[var(--color-accent)] rotate-45" />
               Free to explore
             </span>
-            <span className="w-1 h-1 bg-[#6B6158] rounded-full" />
+            <span className="w-1 h-1 bg-[var(--color-text-muted)] rounded-full" />
             <span className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-[#D97757]" />
-              Curated by humans
+              <span className="w-1.5 h-1.5 bg-[var(--color-accent)] rotate-45" />
+              Updated daily
+            </span>
+            <span className="w-1 h-1 bg-[var(--color-text-muted)] rounded-full" />
+            <span className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 bg-[var(--color-accent)] rotate-45" />
+              Human curated
             </span>
           </div>
         </div>
       </section>
 
       {/* ─── MAIN CONTENT ─── */}
-      <section className="bg-[#1A1720] rounded-t-[32px] px-4 sm:px-6 lg:px-8 py-16 sm:py-20 relative">
+      <section className="bg-[var(--color-bg-surface)] rounded-t-[32px] px-4 sm:px-6 lg:px-8 py-16 sm:py-20 relative">
         <div className="container max-w-7xl mx-auto">
-          {/* Tabs — client component */}
-          <HomeTabs />
-
-          {/* Section Header */}
-          <div className="mb-8 animate-fadeUp">
-            <h2 className="font-display text-2xl sm:text-3xl font-bold text-[#F5F0EB] tracking-tight mb-2">
-              Browse by department
-            </h2>
-            <p className="text-[#6B6158] text-base">
-              Find resources tailored to your role
-            </p>
-          </div>
-
           {/* Department Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-16 animate-fadeUp">
-            {DEPARTMENTS.map((dept) => (
-              <Link
-                key={dept.slug}
-                href={`/${dept.slug}`}
-                className="group relative p-5 bg-[rgba(19,17,24,0.88)] border border-[rgba(54,46,40,0.5)] rounded-xl backdrop-blur-xl hover:border-[#D97757] hover:-translate-y-1 spring-hover"
-              >
-                <div className="font-body font-semibold text-[#F5F0EB] text-[15px] mb-1">
-                  {dept.name}
-                </div>
-                <div className="text-[#6B6158] text-sm">{dept.count} skills</div>
-                <span className="absolute top-5 right-5 text-[#6B6158] group-hover:text-[#D97757] group-hover:translate-x-1 transition-all">
-                  →
-                </span>
-              </Link>
-            ))}
-          </div>
-
-          {/* Section Header */}
-          <div className="mb-8 animate-fadeUp">
-            <h2 className="font-display text-2xl sm:text-3xl font-bold text-[#F5F0EB] tracking-tight mb-2">
-              Featured skills
-            </h2>
-            <p className="text-[#6B6158] text-base">
-              The most popular resources in the community
-            </p>
-          </div>
-
-          {/* Resource Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-fadeUp">
-            {(featuredSkills ?? []).map((skill) => (
-              <Link
-                key={skill.id}
-                href={`/skills/${skill.slug}`}
-                className="group relative p-6 bg-[linear-gradient(135deg,rgba(19,17,24,0.88)_0%,rgba(26,23,32,0.6)_100%)] border border-[rgba(54,46,40,0.5)] rounded-[22px] backdrop-blur-xl overflow-hidden hover:border-[#D97757] hover:-translate-y-[5px] spring-hover"
-              >
-                <div className="absolute top-0 right-0 w-24 h-24 bg-[radial-gradient(circle_at_top_right,rgba(217,119,87,0.12),transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="flex items-start justify-between gap-3 mb-3">
-                  <h3 className="font-body font-semibold text-[#F5F0EB] text-base leading-snug flex-1 pr-2">
-                    {skill.title}
-                  </h3>
-                  <div className="flex items-center gap-1.5 text-xs text-[#6B6158] flex-shrink-0">
-                    <Bookmark className="w-3.5 h-3.5" />
-                    <span>{formatNumber(skill.save_count)}</span>
-                  </div>
-                </div>
-                <p className="text-[#A99E92] text-sm leading-relaxed mb-4 line-clamp-2">
-                  {skill.description}
+          <div className="mb-16 animate-fade-up">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="font-display text-2xl sm:text-3xl font-bold text-[var(--color-text-primary)] tracking-tight mb-2">
+                  Browse by department
+                </h2>
+                <p className="text-[var(--color-text-muted)] text-base">
+                  Find resources tailored to your role
                 </p>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[rgba(217,119,87,0.12)] text-[#D97757] text-[10px] font-semibold tracking-wider uppercase rounded-full border border-[rgba(217,119,87,0.2)]">
-                    {skill.department.charAt(0).toUpperCase() + skill.department.slice(1)}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {DEPARTMENTS.map((dept) => (
+                <Link
+                  key={dept.slug}
+                  href={`/${dept.slug}`}
+                  className="group relative p-5 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-2xl overflow-hidden hover:border-[var(--color-border-hover)] transition-all duration-300"
+                >
+                  <h3 className="font-display font-semibold text-[var(--color-text-primary)] text-[15px] mb-1 group-hover:text-[var(--color-accent)] transition-colors">
+                    {dept.name}
+                  </h3>
+                  <p className="text-sm text-[var(--color-text-muted)]">{dept.count} resources</p>
+                  <span className="absolute bottom-4 right-5 text-[var(--color-text-muted)] group-hover:text-[var(--color-accent)] group-hover:translate-x-1 transition-all">
+                    →
                   </span>
-                  <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-semibold tracking-wider uppercase rounded-full border ${
-                    skill.tier === 'free'
-                      ? 'bg-[rgba(74,222,128,0.12)] text-[#4ADE80] border-[rgba(74,222,128,0.2)]'
-                      : 'bg-[rgba(201,134,42,0.12)] text-[#D97757] border-[rgba(201,134,42,0.2)]'
-                  }`}>
-                    {skill.tier === 'elite' ? 'Elite' : 'Free'}
-                  </span>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))}
+            </div>
           </div>
 
-          <div className="mt-12 text-center animate-fadeUp">
-            <Link href="/skills" className="btn btn-ghost text-base h-12 px-8">
-              View all skills
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
+          {/* Featured Skills */}
+          {featuredSkills && featuredSkills.length > 0 && (
+            <div className="animate-fade-up">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h2 className="font-display text-2xl sm:text-3xl font-bold text-[var(--color-text-primary)] tracking-tight mb-2">
+                    Featured skills
+                  </h2>
+                  <p className="text-[var(--color-text-muted)] text-base">
+                    The most popular resources in the community
+                  </p>
+                </div>
+                <Link href="/skills" className="text-sm text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors flex items-center gap-1">
+                  View all
+                  <span>→</span>
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {featuredSkills.map((skill, index) => (
+                  <Link
+                    key={skill.id}
+                    href={`/skills/${skill.slug}`}
+                    className="group relative bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-2xl overflow-hidden hover:border-[var(--color-border-hover)] transition-all duration-300"
+                    style={{ animationDelay: `${index * 75}ms` }}
+                  >
+                    {/* Brand accent bar */}
+                    <div className="h-1 w-full bg-gradient-to-r from-[var(--color-accent)] to-transparent origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+
+                    <div className="p-6">
+                      {/* Title Row */}
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <h3 className="font-display font-semibold text-[var(--color-text-primary)] text-base group-hover:text-[var(--color-accent)] transition-colors leading-snug flex-1 pr-2">
+                          {skill.title}
+                        </h3>
+                        <div className="flex items-center gap-1.5 text-xs text-[var(--color-text-muted)] flex-shrink-0">
+                          <Bookmark className="w-3.5 h-3.5" />
+                          <span>{formatNumber(skill.save_count ?? 0)}</span>
+                        </div>
+                      </div>
+
+                      {/* Prompt Preview */}
+                      {skill.prompt_preview && (
+                        <div className="mb-4 p-3 bg-[var(--color-bg-base)] rounded-xl border border-[var(--color-border)]">
+                          <pre className="text-xs font-mono text-[var(--color-text-muted)] line-clamp-2 leading-relaxed whitespace-pre-wrap">
+                            {skill.prompt_preview}
+                          </pre>
+                        </div>
+                      )}
+
+                      {/* Description */}
+                      <p className="text-sm text-[var(--color-text-secondary)] line-clamp-2 mb-4 leading-relaxed">
+                        {skill.description}
+                      </p>
+
+                      {/* Badges */}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="badge badge-dept">
+                          {skill.department.charAt(0).toUpperCase() + skill.department.slice(1)}
+                        </span>
+                        <span className={`badge ${skill.tier === 'free' ? 'badge-free' : 'badge-elite'}`}>
+                          {skill.tier === 'elite' ? 'Elite' : 'Free'}
+                        </span>
+                      </div>
+
+                      {/* Source line */}
+                      <div className="mt-4 pt-3 border-t border-[var(--color-border-subtle)]">
+                        <span className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider">
+                          via {skill.source_type}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Ambient glow on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-[rgba(196,99,58,0.04)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </>

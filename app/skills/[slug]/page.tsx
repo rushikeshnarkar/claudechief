@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { ArrowLeft, ExternalLink, Bookmark, User, Calendar, Share2, Star } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Bookmark, User, Calendar, Star } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { formatNumber } from '@/lib/utils';
 import { SITE_URL } from '@/lib/constants';
@@ -56,41 +56,43 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
     : skill.source_type === 'twitter' ? 'Twitter'
     : 'Source';
 
-  const tierBadge = skill.tier === 'free'
-    ? 'bg-[rgba(74,222,128,0.12)] text-[#4ADE80] border-[rgba(74,222,128,0.2)]'
-    : 'bg-[rgba(201,134,42,0.12)] text-[#D97757] border-[rgba(201,134,42,0.2)]';
-
   return (
     <>
       {/* ─── HERO HEADER ─── */}
-      <section className="pt-28 pb-8 px-4 sm:px-6 lg:px-8 bg-[#1A1720]">
-        <div className="container max-w-4xl mx-auto">
+      <section className="pt-20 pb-8 px-4 sm:px-6 lg:px-8 bg-[var(--color-bg-surface)] relative overflow-hidden">
+        {/* Background glow */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[radial-gradient(ellipse,rgba(196,99,58,0.08)_0%,transparent_70%)]" />
+        </div>
+
+        <div className="container max-w-5xl mx-auto relative">
           {/* Back Button */}
           <Link
             href="/skills"
-            className="inline-flex items-center gap-2 text-sm text-[#6B6158] hover:text-[#D97757] transition-colors mb-8"
+            className="inline-flex items-center gap-2 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors mb-8 group"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             Back to skills
           </Link>
 
           {/* Tags */}
-          <div className="flex items-center gap-2.5 mb-5 flex-wrap">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[rgba(217,119,87,0.12)] text-[#D97757] text-[10px] font-semibold tracking-wider uppercase rounded-full border border-[rgba(217,119,87,0.2)]">
-              {deptLabel}
-            </span>
-            <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[10px] font-semibold tracking-wider uppercase rounded-full border ${tierBadge}`}>
+          <div className="flex items-center gap-2 mb-5 flex-wrap">
+            <span className="badge badge-dept">{deptLabel}</span>
+            <span className={`badge ${skill.tier === 'free' ? 'badge-free' : 'badge-elite'}`}>
               {skill.tier === 'elite' ? 'Elite' : 'Free'}
             </span>
           </div>
 
           {/* Title */}
-          <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-[#F5F0EB] tracking-tight leading-tight mb-5">
+          <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--color-text-primary)] tracking-[-0.03em] leading-[1.1] mb-5">
             {skill.title}
           </h1>
 
+          {/* Decorative accent underline */}
+          <div className="w-32 h-1 bg-gradient-to-r from-[var(--color-accent)] to-transparent mb-6" />
+
           {/* Description */}
-          <p className="text-lg text-[#A99E92] leading-relaxed max-w-2xl mb-8">
+          <p className="text-lg text-[var(--color-text-secondary)] leading-relaxed max-w-2xl mb-8">
             {skill.description}
           </p>
 
@@ -101,22 +103,22 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
                 href={skill.creator_link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-[#A99E92] hover:text-[#D97757] transition-colors"
+                className="flex items-center gap-2 text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
               >
                 <User className="w-4 h-4" />
                 <span>by <span className="font-medium">{skill.creator_name}</span></span>
               </a>
             ) : (
-              <div className="flex items-center gap-2 text-[#A99E92]">
+              <div className="flex items-center gap-2 text-[var(--color-text-secondary)]">
                 <User className="w-4 h-4" />
                 <span>by <span className="font-medium">{skill.creator_name}</span></span>
               </div>
             )}
-            <div className="flex items-center gap-2 text-[#A99E92]">
-              <Bookmark className="w-4 h-4" />
-              <span>{formatNumber(skill.save_count)} saves</span>
+            <div className="flex items-center gap-2 text-[var(--color-text-secondary)]">
+              <Bookmark className="w-4 h-4 text-[var(--color-accent)]" />
+              <span>{formatNumber(skill.save_count ?? 0)} saves</span>
             </div>
-            <div className="flex items-center gap-2 text-[#A99E92]">
+            <div className="flex items-center gap-2 text-[var(--color-text-secondary)]">
               <Calendar className="w-4 h-4" />
               <span>{new Date(skill.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
             </div>
@@ -125,33 +127,33 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
       </section>
 
       {/* ─── MAIN CONTENT ─── */}
-      <section className="px-4 sm:px-6 lg:px-8 py-10 bg-[#0D0B0F]">
-        <div className="container max-w-4xl mx-auto">
+      <section className="px-4 sm:px-6 lg:px-8 py-10 bg-[var(--color-bg-base)]">
+        <div className="container max-w-5xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-8">
               {/* Prompt Preview Card */}
               {skill.prompt_preview && (
-                <div className="relative p-8 bg-[linear-gradient(135deg,rgba(19,17,24,0.88)_0%,rgba(26,23,32,0.6)_100%)] border border-[rgba(54,46,40,0.5)] rounded-[22px] backdrop-blur-xl">
-                  <div className="absolute top-0 left-0 w-20 h-20 bg-[radial-gradient(circle_at_top_left,rgba(217,119,87,0.08),transparent_70%)]" />
-                  <h2 className="font-display text-xl font-bold text-[#F5F0EB] mb-5 flex items-center gap-2">
-                    <span className="w-8 h-8 flex items-center justify-center bg-[#D97757]/20 rounded-lg">
-                      <Star className="w-4 h-4 text-[#D97757]" />
+                <div className="relative p-8 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-2xl overflow-hidden">
+                  <div className="absolute top-0 left-0 w-32 h-32 bg-[radial-gradient(circle_at_top_left,rgba(196,99,58,0.08),transparent_70%)]" />
+                  <h2 className="font-display text-xl font-bold text-[var(--color-text-primary)] mb-5 flex items-center gap-3">
+                    <span className="w-10 h-10 flex items-center justify-center bg-[var(--color-accent-muted)] rounded-xl">
+                      <Star className="w-5 h-5 text-[var(--color-accent)]" />
                     </span>
                     Prompt Preview
                   </h2>
-                  <pre className="text-[#A99E92] text-sm leading-relaxed whitespace-pre-wrap font-mono bg-[#131118]/50 rounded-xl p-5 border border-[rgba(54,46,40,0.3)]">
+                  <pre className="text-sm font-mono text-[var(--color-text-secondary)] leading-relaxed whitespace-pre-wrap bg-[var(--color-bg-base)] rounded-xl p-5 border border-[var(--color-border)] overflow-x-auto">
                     {skill.prompt_preview}
                   </pre>
                 </div>
               )}
 
               {/* Related Resources */}
-              <div className="p-8 bg-[rgba(19,17,24,0.88)] border border-[rgba(54,46,40,0.5)] rounded-[22px] backdrop-blur-xl">
-                <h2 className="font-display text-xl font-bold text-[#F5F0EB] mb-5">
+              <div className="p-8 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-2xl">
+                <h2 className="font-display text-xl font-bold text-[var(--color-text-primary)] mb-4">
                   Related Resources
                 </h2>
-                <p className="text-[#6B6158] text-sm">
+                <p className="text-sm text-[var(--color-text-muted)]">
                   More {deptLabel} skills coming soon…
                 </p>
               </div>
@@ -178,7 +180,7 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
             operatingSystem: 'Claude',
             offers: {
               '@type': 'Offer',
-              price: skill.tier === 'free' ? '0' : '0',
+              price: '0',
               priceCurrency: 'USD',
             },
             author: {

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, Clock, Wrench, Bookmark, ExternalLink, User, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Clock, Wrench, Bookmark, User, ArrowRight, Code } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { formatNumber } from '@/lib/utils';
 import { SITE_URL } from '@/lib/constants';
@@ -50,6 +50,7 @@ export default async function WorkflowDetailPage({ params }: WorkflowPageProps) 
 
   const steps = Array.isArray(workflow.steps) ? workflow.steps : [];
   const tools = Array.isArray(workflow.tools) ? workflow.tools : [];
+  const deptLabel = workflow.department.charAt(0).toUpperCase() + workflow.department.slice(1);
 
   return (
     <>
@@ -72,71 +73,77 @@ export default async function WorkflowDetailPage({ params }: WorkflowPageProps) 
       />
 
       {/* ─── HERO ─── */}
-      <section className="pt-28 pb-8 px-4 sm:px-6 lg:px-8 bg-[#1A1720]">
-        <div className="container max-w-4xl mx-auto">
-          <Link href="/workflows" className="inline-flex items-center gap-2 text-sm text-[#6B6158] hover:text-[#D97757] transition-colors mb-8">
-            <ArrowLeft className="w-4 h-4" /> Back to workflows
+      <section className="pt-20 pb-8 px-4 sm:px-6 lg:px-8 bg-[var(--color-bg-surface)] relative overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[radial-gradient(ellipse,rgba(90,138,181,0.08)_0%,transparent_70%)]" />
+        </div>
+
+        <div className="container max-w-5xl mx-auto relative">
+          <Link href="/workflows" className="inline-flex items-center gap-2 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors mb-8 group">
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            Back to workflows
           </Link>
 
-          <div className="flex items-center gap-2 mb-4 flex-wrap">
-            <span className="inline-flex items-center px-3.5 py-1.5 bg-[rgba(217,119,87,0.12)] text-[#D97757] text-[10px] font-semibold tracking-wider uppercase rounded-full border border-[rgba(217,119,87,0.2)]">
-              {workflow.department.charAt(0).toUpperCase() + workflow.department.slice(1)}
-            </span>
-            <span className="inline-flex items-center px-3.5 py-1.5 bg-[rgba(106,155,204,0.12)] text-[#6A9BCC] text-[10px] font-semibold tracking-wider uppercase rounded-full border border-[rgba(106,155,204,0.2)]">
+          <div className="flex items-center gap-2 mb-5 flex-wrap">
+            <span className="badge badge-dept">{deptLabel}</span>
+            <span className="badge" style={{ background: 'var(--color-blue-muted)', color: 'var(--color-blue)', border: '1px solid rgba(90,138,181,0.25)' }}>
               Workflow
             </span>
           </div>
 
-          <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-[#F5F0EB] tracking-tight leading-tight mb-5">
+          <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--color-text-primary)] tracking-[-0.03em] leading-[1.1] mb-5">
             {workflow.title}
           </h1>
-          <p className="text-lg text-[#A99E92] leading-relaxed max-w-2xl mb-8">
+
+          <div className="w-32 h-1 bg-gradient-to-r from-[var(--color-blue)] to-transparent mb-6" />
+
+          <p className="text-lg text-[var(--color-text-secondary)] leading-relaxed max-w-2xl mb-8">
             {workflow.description}
           </p>
 
           <div className="flex items-center gap-6 text-sm flex-wrap">
-            {workflow.creator_link ? (
-              <a href={workflow.creator_link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#A99E92] hover:text-[#D97757] transition-colors">
-                <User className="w-4 h-4" /><span>by <span className="font-medium">{workflow.creator_name}</span></span>
-              </a>
-            ) : (
-              <div className="flex items-center gap-2 text-[#A99E92]">
-                <User className="w-4 h-4" /><span>by <span className="font-medium">{workflow.creator_name}</span></span>
+            {workflow.creator_name && (
+              <div className="flex items-center gap-2 text-[var(--color-text-secondary)]">
+                <User className="w-4 h-4" />
+                <span>by <span className="font-medium">{workflow.creator_name}</span></span>
               </div>
             )}
-            <div className="flex items-center gap-2 text-[#A99E92]"><Bookmark className="w-4 h-4" /><span>{formatNumber(workflow.save_count ?? 0)} saves</span></div>
+            <div className="flex items-center gap-2 text-[var(--color-text-secondary)]">
+              <Bookmark className="w-4 h-4 text-[var(--color-blue)]" />
+              <span>{formatNumber(workflow.save_count ?? 0)} saves</span>
+            </div>
             {workflow.time_estimate && (
-              <div className="flex items-center gap-2 text-[#A99E92]"><Clock className="w-4 h-4" /><span>{workflow.time_estimate}</span></div>
+              <div className="flex items-center gap-2 text-[var(--color-text-secondary)]"><Clock className="w-4 h-4" /><span>{workflow.time_estimate}</span></div>
             )}
             {workflow.difficulty && (
-              <div className="flex items-center gap-2 text-[#A99E92]"><Wrench className="w-4 h-4" /><span>{DIFFICULTY_LABELS[workflow.difficulty] ?? workflow.difficulty}</span></div>
+              <div className="flex items-center gap-2 text-[var(--color-text-secondary)]"><Wrench className="w-4 h-4" /><span>{DIFFICULTY_LABELS[workflow.difficulty] ?? workflow.difficulty}</span></div>
             )}
           </div>
         </div>
       </section>
 
       {/* ─── MAIN CONTENT ─── */}
-      <section className="px-4 sm:px-6 lg:px-8 py-10 bg-[#0D0B0F]">
-        <div className="container max-w-4xl mx-auto">
+      <section className="px-4 sm:px-6 lg:px-8 py-10 bg-[var(--color-bg-base)]">
+        <div className="container max-w-5xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Steps */}
             <div className="lg:col-span-2 space-y-8">
               {steps.length > 0 && (
-                <div className="relative p-8 bg-[rgba(19,17,24,0.88)] border border-[rgba(54,46,40,0.5)] rounded-[22px]">
-                  <div className="absolute top-0 left-0 w-20 h-20 bg-[radial-gradient(circle_at_top_left,rgba(106,155,204,0.08),transparent_70%)]" />
-                  <h2 className="font-display text-xl font-bold text-[#F5F0EB] mb-6 flex items-center gap-2">
-                    <span className="w-8 h-8 flex items-center justify-center bg-[#6A9BCC]/20 rounded-lg"><ArrowRight className="w-4 h-4 text-[#6A9BCC]" /></span>
+                <div className="relative p-8 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-2xl overflow-hidden">
+                  <div className="absolute top-0 left-0 w-32 h-32 bg-[radial-gradient(circle_at_top_left,rgba(90,138,181,0.08),transparent_70%)]" />
+                  <h2 className="font-display text-xl font-bold text-[var(--color-text-primary)] mb-6 flex items-center gap-3">
+                    <span className="w-10 h-10 flex items-center justify-center bg-[var(--color-blue-muted)] rounded-xl">
+                      <ArrowRight className="w-5 h-5 text-[var(--color-blue)]" />
+                    </span>
                     How it works
                   </h2>
                   <div className="space-y-6">
                     {steps.map((step: string, i: number) => (
                       <div key={i} className="flex gap-4">
-                        <div className="flex-shrink-0 w-8 h-8 bg-[#131118] border border-[rgba(54,46,40,0.5)] rounded-full flex items-center justify-center text-[#6B6158] text-sm font-bold">
+                        <div className="flex-shrink-0 w-8 h-8 bg-[var(--color-bg-base)] border border-[var(--color-border)] rounded-full flex items-center justify-center text-[var(--color-text-muted)] text-sm font-bold">
                           {i + 1}
                         </div>
-                        <div>
-                          <p className="text-[#A99E92] text-sm leading-relaxed">{step}</p>
-                        </div>
+                        <p className="text-[var(--color-text-secondary)] text-sm leading-relaxed pt-1">{step}</p>
                       </div>
                     ))}
                   </div>
@@ -144,11 +151,16 @@ export default async function WorkflowDetailPage({ params }: WorkflowPageProps) 
               )}
 
               {tools.length > 0 && (
-                <div className="p-8 bg-[rgba(19,17,24,0.88)] border border-[rgba(54,46,40,0.5)] rounded-[22px]">
-                  <h2 className="font-display text-xl font-bold text-[#F5F0EB] mb-5">Tools used</h2>
+                <div className="p-8 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-2xl">
+                  <h2 className="font-display text-xl font-bold text-[var(--color-text-primary)] mb-5 flex items-center gap-3">
+                    <span className="w-10 h-10 flex items-center justify-center bg-[var(--color-accent-muted)] rounded-xl">
+                      <Code className="w-5 h-5 text-[var(--color-accent)]" />
+                    </span>
+                    Tools used
+                  </h2>
                   <div className="flex flex-wrap gap-3">
                     {tools.map((tool: string) => (
-                      <span key={tool} className="px-4 py-2 bg-[#131118] border border-[rgba(54,46,40,0.5)] rounded-lg text-sm text-[#A99E92]">
+                      <span key={tool} className="px-4 py-2 bg-[var(--color-bg-base)] border border-[var(--color-border)] rounded-lg text-sm text-[var(--color-text-secondary)]">
                         {tool}
                       </span>
                     ))}
