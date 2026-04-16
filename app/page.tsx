@@ -8,7 +8,7 @@ import { HomeSearch } from '@/components/HomeSearch';
 import { ScrollReveal } from '@/components/ScrollReveal';
 
 export const metadata: Metadata = {
-  title: 'Claude Chief — Best Claude Skills Directory',
+  title: 'Claude Chief — Discover the Best Claude Skills, Workflows & MCPs',
   description: 'Stop hunting across YouTube, GitHub, and Twitter. Claude Chief brings every skill, workflow, MCP, update, and creator into one curated place.',
 };
 
