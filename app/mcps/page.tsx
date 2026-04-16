@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Search, Bookmark, Settings, ArrowRight } from 'lucide-react';
+import { Search, Bookmark, Settings, ArrowRight, Terminal, BadgeCheck } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { formatNumber } from '@/lib/utils';
 
@@ -113,7 +113,26 @@ export default async function MCPsPage() {
                         {mcp.connected_service}
                       </span>
                       <span className="badge badge-free">Free</span>
+                      {mcp.is_official && (
+                        <span className="badge badge-elite">
+                          <BadgeCheck className="w-3 h-3" />
+                          Official
+                        </span>
+                      )}
                     </div>
+
+                    {/* Install command callout */}
+                    {mcp.install_command && (
+                      <div className="mt-3 px-3 py-2 bg-[var(--color-bg-base)] border border-[rgba(122,154,94,0.15)] rounded-xl">
+                        <div className="flex items-center gap-2 text-xs text-[var(--color-sage)] font-medium mb-1">
+                          <Terminal className="w-3 h-3" />
+                          Install
+                        </div>
+                        <code className="text-[11px] font-mono text-[var(--color-text-muted)] truncate block">
+                          {mcp.install_command}
+                        </code>
+                      </div>
+                    )}
 
                     <div className="flex items-center gap-4 text-xs text-[var(--color-text-muted)] pt-3 border-t border-[var(--color-border-subtle)]">
                       <span className="flex items-center gap-1.5">

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Search, Bookmark, Clock, Wrench, ArrowRight } from 'lucide-react';
+import { Search, Bookmark, Clock, Wrench, ListOrdered, ArrowRight } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { formatNumber } from '@/lib/utils';
 
@@ -105,6 +105,15 @@ export default async function WorkflowsPage() {
                       {workflow.description}
                     </p>
 
+                    {/* Step count indicator */}
+                    {Array.isArray(workflow.steps) && workflow.steps.length > 0 && (
+                      <div className="flex items-center gap-1.5 text-xs text-[var(--color-blue)] font-medium mb-3">
+                        <ListOrdered className="w-3.5 h-3.5" />
+                        <span>{workflow.steps.length} step{workflow.steps.length !== 1 ? 's' : ''}</span>
+                      </div>
+                    )}
+
+                    {/* Badges */}
                     <div className="flex items-center gap-2 flex-wrap mb-4">
                       <span className="badge badge-dept">
                         {workflow.department.charAt(0).toUpperCase() + workflow.department.slice(1)}
